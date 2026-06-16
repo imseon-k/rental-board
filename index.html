@@ -3,28 +3,28 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Halton Home Board</title>
+<title>Halton Home Board · Live</title>
+<meta name="description" content="Live rental investigation board for Fergus, Acton, Milton, Oakville, and Burlington. Auto-crawled from REALTOR.ca, Skyline Living, and Apartments.com." />
 <style>
   :root{
     --font-sans:"Product Sans","Google Sans","Roboto","Arial",system-ui,-apple-system,"Segoe UI",sans-serif;
     color-scheme:dark;
-    /* Dark-first palette: shadcn-style tokens using Material UI dark values */
-    --paper:#121212;          /* MUI background.default */
-    --card:#1E1E1E;           /* elevated dark surface */
+    --paper:#121212;
+    --card:#1E1E1E;
     --card-2:#242424;
-    --ink:#FFFFFF;            /* MUI text.primary */
-    --ink-2:rgba(255,255,255,.70);  /* MUI text.secondary */
-    --ink-3:rgba(255,255,255,.50);  /* MUI text.disabled */
-    --line:rgba(255,255,255,.12);   /* MUI divider */
+    --ink:#FFFFFF;
+    --ink-2:rgba(255,255,255,.70);
+    --ink-3:rgba(255,255,255,.50);
+    --line:rgba(255,255,255,.12);
     --line-2:rgba(255,255,255,.08);
-    --primary:#90CAF9;        /* MUI blue 200 */
-    --primary-strong:#42A5F5; /* MUI blue 400 */
+    --primary:#90CAF9;
+    --primary-strong:#42A5F5;
     --ok:#66BB6A; --ok-soft:rgba(102,187,106,.14); --ok-line:rgba(102,187,106,.42);
     --over:#FFB74D; --over-soft:rgba(255,183,77,.14); --over-line:rgba(255,183,77,.38);
     --tbd:#CE93D8; --tbd-soft:rgba(206,147,216,.14); --tbd-line:rgba(206,147,216,.38);
+    --err:#EF5350; --err-soft:rgba(239,83,80,.14); --err-line:rgba(239,83,80,.38);
     --shadow:0 1px 1px rgba(0,0,0,.28), 0 10px 28px -16px rgba(0,0,0,.72);
     --r:16px;
-    /* status palette: Material UI dark-compatible muted chips */
     --s-to_contact-bg:rgba(144,202,249,.14); --s-to_contact-fg:#90CAF9; --s-to_contact-dot:#42A5F5;
     --s-contacted-bg:rgba(255,183,77,.14); --s-contacted-fg:#FFB74D; --s-contacted-dot:#FFA726;
     --s-viewing-bg:rgba(206,147,216,.14); --s-viewing-fg:#CE93D8; --s-viewing-dot:#AB47BC;
@@ -33,44 +33,40 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0;width:100%;max-width:100%;overflow-x:hidden;background:var(--paper);color:var(--ink);
-    font-family:var(--font-sans);
-    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    font-family:var(--font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   .app{width:100%;max-width:468px;margin:0 auto;min-height:100dvh;background:var(--paper);
-    padding:0 0 40px;position:relative;overflow-x:hidden}
+    padding:0 0 96px;position:relative;overflow-x:hidden}
   .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 
-  /* ---------- header ---------- */
   header{position:sticky;top:0;z-index:30;background:rgba(18,18,18,.84);
     backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);
     border-bottom:1px solid var(--line);padding:14px 16px 10px}
   .brand{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-  h1{font-family:var(--font-sans);font-weight:700;font-size:21px;letter-spacing:-.01em;margin:0;line-height:1.12}
-  .brand .meta{font-size:11px;color:var(--ink-3);font-weight:500;white-space:nowrap;letter-spacing:.01em}
-  .sub{margin:6px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.45;letter-spacing:0}
+  h1{font-weight:700;font-size:21px;letter-spacing:-.01em;margin:0;line-height:1.12}
+  h1 .live{font-size:9.5px;letter-spacing:.1em;color:var(--ok);margin-left:6px;vertical-align:3px;font-weight:700;
+    background:var(--ok-soft);padding:3px 6px;border-radius:5px;border:1px solid var(--ok-line);text-transform:uppercase}
+  .brand .meta{font-size:11px;color:var(--ink-3);font-weight:500;white-space:nowrap}
+  .sub{margin:6px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.45}
   .sub b{color:var(--ink);font-weight:600}
 
-  /* controls */
   .controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
   .ctl-row{display:flex;align-items:center;gap:8px;min-width:0}
   .label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700;flex:0 0 auto;width:34px}
-  .seg{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding:1px;flex:1}
-  .seg::-webkit-scrollbar{display:none}
-  .pill{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--ink-2);
-    font:600 13px/1.15 var(--font-sans);padding:8px 12px;border-radius:999px;cursor:pointer;
-    white-space:nowrap;transition:.15s;display:inline-flex;align-items:center;gap:5px}
-  .pill:hover{border-color:rgba(144,202,249,.55);background:rgba(144,202,249,.08)}
-  .pill[aria-pressed="true"]{background:var(--primary);color:#0B0F14;border-color:var(--primary)}
-  .pill .star{font-size:11px;transform:translateY(-.5px)}
   .budget{display:flex;align-items:center;gap:10px;min-width:0;width:100%}
   .budget input[type=range]{flex:1 1 auto;min-width:0;-webkit-appearance:none;appearance:none;height:4px;border-radius:999px;
     background:linear-gradient(90deg,var(--ok) 0,var(--ok) var(--fill,30%),var(--line) var(--fill,30%),var(--line) 100%);outline:none}
   .budget input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
     background:var(--card);border:2px solid var(--primary);box-shadow:var(--shadow);cursor:pointer;margin-top:0}
   .budget input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--card);border:2px solid var(--primary);cursor:pointer}
-  .budget .val{flex:0 0 auto;font:700 14px/1.1 var(--font-sans);letter-spacing:-.01em;color:var(--ink);min-width:58px;text-align:right}
-  .budget .count{flex:0 1 auto;font-size:11.5px;color:var(--ink-3);min-width:auto;text-align:right;font-weight:500;white-space:nowrap}
+  .budget .val{flex:0 0 auto;font:700 14px/1.1 var(--font-sans);color:var(--ink);min-width:58px;text-align:right}
+  .budget .count{flex:0 1 auto;font-size:11.5px;color:var(--ink-3);font-weight:500;white-space:nowrap}
 
-  /* ---------- reality banner ---------- */
+  .crawl-status{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-3)}
+  .crawl-status .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(102,187,106,.7);animation:ping 2.4s infinite}
+  .crawl-status.error .dot{background:var(--err);animation:none}
+  .crawl-status.busy .dot{background:var(--primary);animation:none}
+  @keyframes ping{0%{box-shadow:0 0 0 0 rgba(102,187,106,.7)}80%,100%{box-shadow:0 0 0 8px rgba(102,187,106,0)}}
+
   .note{margin:14px 16px 0;background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);
     border-left:3px solid var(--over);border-radius:12px;padding:11px 12px;display:flex;gap:10px}
   .note .ico{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--over-soft);color:var(--over);
@@ -79,64 +75,126 @@
   .note b{color:var(--ink);font-weight:600}
   .note button{margin-left:auto;align-self:flex-start;border:0;background:transparent;color:var(--ink-3);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
 
-  /* ---------- list ---------- */
-  .list{padding:14px 16px 0;display:flex;flex-direction:column;gap:12px;width:100%;min-width:0}
+  /* ---------- review queue ---------- */
+  .review{margin:14px 16px 0;background:linear-gradient(180deg,rgba(144,202,249,.10),rgba(144,202,249,.03));
+    border:1px solid rgba(144,202,249,.32);border-radius:12px;overflow:hidden}
+  .review-head{padding:10px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+  .review-head h3{margin:0;font:700 12.5px/1.2 var(--font-sans);color:var(--primary);letter-spacing:.02em;text-transform:uppercase}
+  .review-head .ct{background:var(--primary);color:#0B0F14;font:700 11px/1 var(--font-sans);padding:3px 8px;border-radius:999px;min-width:22px;text-align:center}
+  .review-head .caret{margin-left:auto;color:var(--primary);font-size:13px;transition:.15s}
+  .review.collapsed .caret{transform:rotate(-90deg)}
+  .review.collapsed .review-body{display:none}
+  .review-body{padding:6px 8px 10px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(144,202,249,.18)}
+  .rcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 11px}
+  .rcard .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:5px}
+  .rcard .src{font:700 10px/1 var(--font-sans);letter-spacing:.05em;text-transform:uppercase;color:var(--primary);
+    background:rgba(144,202,249,.12);padding:4px 7px;border-radius:6px}
+  .rcard .twn{font:600 11px/1 var(--font-sans);color:var(--ink-2)}
+  .rcard h4{margin:3px 0 2px;font:600 13.5px/1.3 var(--font-sans);overflow-wrap:anywhere}
+  .rcard .addr{font-size:11.5px;color:var(--ink-3);margin:0 0 6px;overflow-wrap:anywhere}
+  .rcard .pr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .rcard .pr .p{font:700 14.5px/1.1 var(--font-sans);color:var(--ok)}
+  .rcard .pr .p.tbd{color:var(--tbd);font-size:12.5px}
+  .rcard .pr .b{font-size:11px;color:var(--ink-3)}
+  .rcard .actions{display:flex;gap:6px}
+  .rcard .actions button,.rcard .actions a{flex:1;font:600 11.5px/1.15 var(--font-sans);padding:8px 8px;border-radius:8px;
+    cursor:pointer;text-decoration:none;text-align:center;border:1px solid var(--line);background:transparent;color:var(--ink-2);transition:.12s}
+  .rcard .actions .approve{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-line)}
+  .rcard .actions .approve:hover{background:rgba(102,187,106,.22)}
+  .rcard .actions .reject{color:var(--ink-3)}
+  .rcard .actions .reject:hover{background:rgba(255,255,255,.06)}
+  .rcard .actions .view{color:var(--primary);border-color:rgba(144,202,249,.4)}
+  .rcard .actions .view:hover{background:rgba(144,202,249,.12)}
+  .review .empty{padding:14px 12px;text-align:center;font-size:12px;color:var(--ink-3)}
 
+  /* ---------- list ---------- */
+  .list{padding:14px 16px 0;display:flex;flex-direction:column;gap:12px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);
-    padding:14px 14px 12px;position:relative;overflow:hidden;width:100%;min-width:0}
+    padding:14px 14px 12px;position:relative;overflow:hidden}
   .source-card{border-color:rgba(144,202,249,.24);background:linear-gradient(180deg,rgba(144,202,249,.08),var(--card))}
-  .source-card .c-area{margin-bottom:11px}
   .card.is-ok{border-color:var(--ok-line)}
   .card.is-ok::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ok)}
   .card.is-passed{opacity:.62}
-  .c-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px;min-width:0}
+  .new-flag{position:absolute;top:12px;right:12px;background:var(--ok);color:#0B0F14;font:700 9px/1 var(--font-sans);
+    letter-spacing:.1em;padding:4px 7px;border-radius:5px;text-transform:uppercase;z-index:2}
+  .c-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}
   .town{font:600 11.5px/1.1 var(--font-sans);color:var(--primary);background:rgba(144,202,249,.12);padding:5px 9px;border-radius:999px}
-  .dist{font-size:11px;color:var(--ink-3);font-weight:500}
-  .rec{margin-left:auto;display:inline-flex;align-items:center;gap:4px;background:var(--primary);color:#0B0F14;
-    font:700 11.5px/1.1 var(--font-sans);padding:5px 9px;border-radius:999px;cursor:help}
-  .rec .s{font-size:9px;opacity:.8;font-weight:600}
-
-  .c-type{font-family:var(--font-sans);font-weight:700;font-size:16.5px;letter-spacing:-.005em;margin:0 0 3px;line-height:1.22;overflow-wrap:anywhere}
+  .src-tag{font:600 9.5px/1 var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);
+    background:var(--line-2);padding:4px 7px;border-radius:5px}
+  .c-type{font-weight:700;font-size:16.5px;letter-spacing:-.005em;margin:0 0 3px;line-height:1.22;overflow-wrap:anywhere}
   .c-area{font-size:12.5px;color:var(--ink-2);line-height:1.45;margin:0 0 10px;overflow-wrap:anywhere}
-
-  .price-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
-  .price{font-family:var(--font-sans);font-weight:700;font-size:23px;letter-spacing:-.015em;line-height:1.05}
+  .price-row{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap}
+  .price{font-weight:700;font-size:23px;letter-spacing:-.015em;line-height:1.05}
   .price .pm{font-size:12px;color:var(--ink-3);font-weight:600;margin-left:1px}
   .price.tbd{font-size:15px;color:var(--tbd)}
   .badge{font:700 10px/1.1 var(--font-sans);letter-spacing:.03em;padding:5px 8px;border-radius:7px;text-transform:uppercase}
   .badge.ok{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok-line)}
   .badge.over{background:var(--over-soft);color:var(--over);border:1px solid var(--over-line)}
   .badge.tbd{background:var(--tbd-soft);color:var(--tbd);border:1px solid var(--tbd-line)}
-  .price-note{font-size:11px;color:var(--ink-3);font-weight:500}
-
-  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-width:0}
-  .chip{font-size:11.5px;color:var(--ink-2);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:5px 8px;line-height:1.2;display:inline-flex;gap:5px;align-items:center;max-width:100%;overflow-wrap:anywhere}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .chip{font-size:11.5px;color:var(--ink-2);background:rgba(255,255,255,.04);border:1px solid var(--line);
+    border-radius:8px;padding:5px 8px;line-height:1.2;display:inline-flex;gap:5px;align-items:center;overflow-wrap:anywhere}
   .chip .k{color:var(--ink-3)}
   .why{font-size:12px;color:var(--ink-2);line-height:1.45;background:var(--line-2);border-radius:9px;padding:8px 10px;margin-bottom:11px;overflow-wrap:anywhere}
-
-  .c-foot{display:flex;align-items:center;gap:9px;min-width:0}
+  .c-foot{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
   .visit{flex:1 1 auto;min-width:0;text-align:center;text-decoration:none;border:1px solid var(--primary);color:var(--primary);
     font:600 13px/1.15 var(--font-sans);padding:10px 12px;border-radius:10px;transition:.15s;background:transparent}
   .visit:hover{background:var(--primary);color:#0B0F14}
   .status-wrap{flex:0 1 auto;min-width:0;position:relative;display:inline-flex;align-items:center}
   .status-wrap::after{content:"▾";position:absolute;right:9px;font-size:10px;color:inherit;pointer-events:none;opacity:.7}
   select.status{-webkit-appearance:none;appearance:none;border:1px solid transparent;border-radius:10px;
-    font:600 12.5px/1.15 var(--font-sans);padding:10px 26px 10px 24px;cursor:pointer;background-repeat:no-repeat;max-width:145px}
+    font:600 12.5px/1.15 var(--font-sans);padding:10px 26px 10px 24px;cursor:pointer;max-width:145px}
   .status-wrap .dot{position:absolute;left:9px;width:8px;height:8px;border-radius:50%;pointer-events:none}
-  /* per-status colors applied via attribute */
   select.status[data-s="to_contact"]{background:var(--s-to_contact-bg);color:var(--s-to_contact-fg)}
   select.status[data-s="contacted"]{background:var(--s-contacted-bg);color:var(--s-contacted-fg)}
   select.status[data-s="viewing"]{background:var(--s-viewing-bg);color:var(--s-viewing-fg)}
   select.status[data-s="shortlist"]{background:var(--s-shortlist-bg);color:var(--s-shortlist-fg)}
   select.status[data-s="passed"]{background:var(--s-passed-bg);color:var(--s-passed-fg)}
+  .delete-btn{flex:0 0 auto;background:transparent;border:1px solid var(--line);color:var(--ink-3);
+    width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:14px}
+  .delete-btn:hover{color:var(--err);border-color:var(--err-line)}
 
   .contact{font-size:11.5px;color:var(--ink-3);margin:9px 0 0;line-height:1.45}
   .contact b{color:var(--ink-2);font-weight:600}
 
-  .hint{font-size:11.5px;color:var(--ink-3);text-align:center;padding:2px 16px 0}
+  .hint{font-size:11.5px;color:var(--ink-3);text-align:center;padding:8px 16px 0}
   footer{margin:20px 16px 0;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);line-height:1.55}
   footer b{color:var(--ink-2);font-weight:600}
   button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+  /* ---------- floating refresh button ---------- */
+  .fab-wrap{position:fixed;bottom:24px;left:0;right:0;pointer-events:none;z-index:60;display:flex;justify-content:center}
+  .fab-inner{width:100%;max-width:468px;position:relative;pointer-events:none}
+  .fab{position:absolute;bottom:0;right:20px;width:56px;height:56px;border-radius:50%;border:0;
+    background:var(--primary);color:#0B0F14;display:grid;place-items:center;cursor:pointer;pointer-events:auto;
+    box-shadow:0 8px 24px -6px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.08);
+    transition:transform .18s ease,box-shadow .18s ease}
+  .fab:hover{transform:translateY(-2px)}
+  .fab:disabled{cursor:wait;opacity:.85}
+  .fab svg{width:24px;height:24px;display:block}
+  .fab.busy svg{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .fab .pill-badge{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;border-radius:999px;
+    background:var(--over);color:#0B0F14;font:700 11px/1 var(--font-sans);display:grid;place-items:center;padding:0 6px;
+    box-shadow:0 2px 6px rgba(0,0,0,.5)}
+  .fab.has-pending{animation:pulse 2.2s infinite}
+  @keyframes pulse{
+    0%,100%{box-shadow:0 8px 24px -6px rgba(0,0,0,.75),0 0 0 0 rgba(144,202,249,.55)}
+    50%{box-shadow:0 8px 24px -6px rgba(0,0,0,.75),0 0 0 12px rgba(144,202,249,0)}
+  }
+  .fab-meta{position:absolute;bottom:8px;right:88px;background:var(--card);border:1px solid var(--line);
+    border-radius:8px;padding:7px 10px;font:600 11px/1.2 var(--font-sans);color:var(--ink-2);pointer-events:none;
+    opacity:0;transform:translateX(6px);transition:opacity .2s,transform .2s;white-space:nowrap;box-shadow:var(--shadow)}
+  .fab:hover + .fab-meta,.fab:focus + .fab-meta{opacity:1;transform:translateX(0)}
+
+  /* ---------- toast ---------- */
+  .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(8px);
+    background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;font:600 12.5px/1.3 var(--font-sans);box-shadow:var(--shadow);
+    z-index:70;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:88%}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{border-color:var(--err-line);color:var(--err)}
+  .toast.ok{border-color:var(--ok-line)}
 
   @media (max-width:380px){
     header{padding-left:14px;padding-right:14px}
@@ -144,26 +202,22 @@
     .budget{gap:8px}
     .budget .val{min-width:52px;font-size:12.5px}
     .budget .count{display:none}
-    .c-foot{flex-direction:column;align-items:stretch}
-    .status-wrap, select.status{width:100%;max-width:none}
-    .visit{width:100%}
+    .c-foot{flex-wrap:wrap}
+    .status-wrap, select.status{flex:1 1 auto;max-width:none}
+    .visit{flex:1 1 100%}
+    .delete-btn{flex:0 0 auto}
   }
-  @media (max-width:340px){
-    .brand{align-items:flex-start;flex-direction:column;gap:4px}
-    .label{width:30px}
-    .price-row{flex-wrap:wrap}
-  }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
     <div class="brand">
-      <h1>Halton Home Board</h1>
-      <span class="meta tnum" id="updated">Jun 16, 2026</span>
+      <h1>Halton Home Board<span class="live">Live</span></h1>
+      <span class="meta tnum" id="lastCrawl">Loading…</span>
     </div>
-    <p class="sub">Verified detail pages only — <b>no roommates, no shared baths/kitchens</b>. Facebook Marketplace allowed only for private/self-contained units. Target <b>≤&nbsp;$1,300</b> · move-in Jul–Aug.</p>
+    <p class="sub">Live investigation board — <b>auto-crawled</b> from REALTOR.ca, Skyline Living, and Apartments.com. Self-contained units only · target <b>≤&nbsp;$1,350</b> · Halton + Fergus / Acton.</p>
 
     <div class="controls">
       <div class="ctl-row">
@@ -174,128 +228,114 @@
           <span class="count tnum" id="budgetCount"></span>
         </div>
       </div>
+      <div class="crawl-status" id="crawlStatus">
+        <span class="dot"></span><span id="crawlMsg">Ready</span>
+      </div>
     </div>
   </header>
 
   <div class="note" id="note">
     <span class="ico">!</span>
-    <p><b>Data rule.</b> Cards are included only when the “View listing” button opens a specific property/detail page. Facebook Marketplace is allowed, but only for private/self-contained studio, bachelor, basement, or apartment units. Shared rooms, room rentals, roommates, shared bath, and shared kitchen listings are excluded.</p>
+    <p><b>Investigation rule.</b> The crawler pulls candidates from REALTOR.ca, Skyline Living, and Apartments.com. New finds drop into the review queue below — approve to add, reject to suppress forever. Shared rooms / shared kitchens / shared baths are filtered out automatically.</p>
     <button id="noteX" aria-label="Dismiss">×</button>
   </div>
+
+  <section class="review" id="review">
+    <div class="review-head" id="reviewHead">
+      <h3>Pending review</h3>
+      <span class="ct tnum" id="reviewCount">0</span>
+      <span class="caret">▾</span>
+    </div>
+    <div class="review-body" id="reviewBody"></div>
+  </section>
 
   <div id="view"></div>
 
   <footer id="foot"></footer>
 </div>
 
+<div class="fab-wrap" aria-hidden="false">
+  <div class="fab-inner">
+    <button class="fab" id="fab" aria-label="Crawl now">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12a9 9 0 1 1-3.18-6.86"/>
+        <path d="M21 4v5h-5"/>
+      </svg>
+      <span class="pill-badge tnum" id="fabBadge" style="display:none">0</span>
+    </button>
+    <div class="fab-meta" id="fabMeta">Tap to crawl</div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
 /* =========================================================================
-   DATA — self-contained units only (no roommates / no shared bath or kitchen).
-   Facebook Marketplace is allowed only when the URL is a specific listing detail page,
-   the listing town/address is Fergus, Acton, Milton, Oakville, or Burlington,
-   and the description confirms a private/self-contained unit.
-   Compiled & verified Jun 16, 2026. Prices/availability change — confirm on URL.
-   To add or edit a home, copy an object below. Fields:
-     rent: number (monthly CAD) from the verified detail page.
-     dateAdded: ISO date this entered the list (drives "Newest").
-     verification: short note on source/detail-page check.
-
-   Facebook Marketplace exclusion checklist:
-     - EXCLUDE: room for rent, private room, shared room, roommate wanted, roomie,
-       shared kitchen, shared bath, den only, basement room only.
-     - INCLUDE: private/self-contained studio, bachelor, basement apartment, legal
-       basement, separate entrance unit, private kitchen/kitchenette + private bath.
-     - Do not add Marketplace category/search URLs as cards. Use specific listing URLs only.
-     - Do not add listings outside Fergus / Acton / Milton / Oakville / Burlington,
-       even if Facebook shows them after map zooming or scrolling.
+   Halton Home Board — Live edition
+   - Approved listings live in localStorage (seeded on first load from SEED).
+   - The /api/crawl endpoint returns fresh candidates from REALTOR.ca,
+     Skyline Living, and Apartments.com.
+   - New candidates that are not already approved or rejected land in the
+     review queue. The user manually approves or rejects each.
+   - Approved listings show a NEW badge for 7 days from the approval date.
    ========================================================================= */
-const LISTINGS = [
-  {
-    id:"realtorca-milton-newell-studio-basement",
-    town:"Milton",
+
+const STORE = {
+  approved: "halton_approved_v2",
+  statuses: "halton_statuses_v2",
+  pending:  "halton_pending_v2",
+  rejected: "halton_rejected_v2",
+  lastCrawl:"halton_last_crawl_v2",
+  noteHidden:"halton_note_hidden_v2",
+  reviewCollapsed:"halton_review_collapsed_v2"
+};
+
+/* Seed: the 5 verified manual entries from the original board. */
+const SEED = [
+  { id:"realtorca-milton-newell-studio-basement", town:"Milton",
     type:"Studio basement unit · self-contained",
-    area:"1206 Newell Street, Milton, ON L9T 5R4",
-    rent:1300,
-    beds:"Studio",
-    baths:"1 private",
+    area:"1206 Newell Street, Milton, ON L9T 5R4", rent:1300, beds:"Studio", baths:"1 private",
     available:"Confirm",
     included:"Private separate entrance · 1 parking · shared laundry · WiFi not included",
     platform:"REALTOR.ca",
     url:"https://www.realtor.ca/real-estate/29654446/1206-newell-street-milton-de-dempsey-1029-de-dempsey",
     contact:"Armin Saggu · Right At Home Realty · contact via REALTOR.ca",
     dateAdded:"2026-06-16",
-    verification:"REALTOR.ca detail page / MLS W13042132. Studio basement unit with private separate entrance; shared laundry only, not shared room/kitchen/bath housing.",
-    why:"Best-fit verified candidate in the current dataset: self-contained Milton studio basement at the target $1,300/month budget. Confirm current availability before contacting."
-  },
-  {
-    id:"hillcrest-fergus-bachelor",
-    town:"Fergus",
+    why:"Best-fit verified candidate: self-contained Milton studio basement at the $1,300 target." },
+  { id:"hillcrest-fergus-bachelor", town:"Fergus",
     type:"Bachelor suite · apartment building",
-    area:"250 Queen St. E., Fergus, ON N1M 2Y6",
-    rent:1275,
-    beds:"Bachelor",
-    baths:"1 private",
-    available:"Now available",
-    included:"Heat + water included · laundry facilities",
+    area:"250 Queen St. E., Fergus, ON N1M 2Y6", rent:1275, beds:"Bachelor", baths:"1 private",
+    available:"Now available", included:"Heat + water included · laundry facilities",
     platform:"Skyline Living",
     url:"https://www.skylineliving.ca/en/apartments/ontario/fergus/250-queen-st-e-fergus-on",
-    contact:"Resident Manager (226) 780-0735",
-    dateAdded:"2026-06-16",
-    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building suite; not room/share housing.",
-    why:"Lowest verified self-contained option found in the current seed set. Detail page lists a Bachelor 1 Bath suite starting at $1,275/month."
-  },
-  {
-    id:"forfar-fergus-1bed",
-    town:"Fergus",
+    contact:"Resident Manager (226) 780-0735", dateAdded:"2026-06-16",
+    why:"Lowest verified self-contained option in the seed set: $1,275/month Bachelor." },
+  { id:"forfar-fergus-1bed", town:"Fergus",
     type:"1-bedroom suite · apartment building",
-    area:"380 Forfar St. E., Fergus, ON N1M 1B5",
-    rent:1580,
-    beds:"1",
-    baths:"1 private",
-    available:"Now available",
-    included:"Heat + water included · laundry facilities",
+    area:"380 Forfar St. E., Fergus, ON N1M 1B5", rent:1580, beds:"1", baths:"1 private",
+    available:"Now available", included:"Heat + water included · laundry facilities",
     platform:"Skyline Living",
     url:"https://www.skylineliving.ca/en/apartments/ontario/fergus/380-forfar-st-e-fergus-on",
-    contact:"Resident Manager (226) 780-0108",
-    dateAdded:"2026-06-16",
-    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building suite; not room/share housing.",
-    why:"Verified detail page with a listed 1 Bedroom 1 Bath suite starting at $1,580/month."
-  },
-  {
-    id:"belsyde-fergus-building",
-    town:"Fergus",
+    contact:"Resident Manager (226) 780-0108", dateAdded:"2026-06-16",
+    why:"Verified 1 Bedroom 1 Bath suite starting at $1,580/month." },
+  { id:"belsyde-fergus-building", town:"Fergus",
     type:"Apartment building suite",
-    area:"255-375 Belsyde Ave. E., Fergus, ON N1M 2Y2",
-    rent:1695,
-    beds:"Confirm on page",
-    baths:"1 private",
-    available:"Confirm",
-    included:"Laundry facilities · controlled entry · outdoor parking",
+    area:"255-375 Belsyde Ave. E., Fergus, ON N1M 2Y2", rent:1695, beds:"Confirm on page", baths:"1 private",
+    available:"Confirm", included:"Laundry facilities · controlled entry · outdoor parking",
     platform:"Skyline Living",
     url:"https://www.skylineliving.ca/en/apartments/ontario/fergus/255-375-belsyde-ave-e-fergus-on",
-    contact:"Resident Manager (226) 780-0107",
-    dateAdded:"2026-06-16",
-    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building; not room/share housing.",
-    why:"Kept as a verified detail-page listing, but corrected from the previous ~$1,200 estimate to the listed $1,695/month starting price."
-  },
-  {
-    id:"burlington-square-studio",
-    town:"Burlington",
+    contact:"Resident Manager (226) 780-0107", dateAdded:"2026-06-16",
+    why:"Listed starting price $1,695/month." },
+  { id:"burlington-square-studio", town:"Burlington",
     type:"Studio · apartment building",
-    area:"1460 Ghent Ave., Burlington, ON L7R 2H7",
-    rent:1650,
-    beds:"Studio",
-    baths:"1 private",
-    available:"Confirm",
-    included:"Heat + water + gas included · on-site laundry",
+    area:"1460 Ghent Ave., Burlington, ON L7R 2H7", rent:1650, beds:"Studio", baths:"1 private",
+    available:"Confirm", included:"Heat + water + gas included · on-site laundry",
     platform:"Apartments.com",
     url:"https://www.apartments.com/burlington-square-burlington-on/s9p8qp5/",
     contact:"Contact property via Apartments.com",
     dateAdded:"2026-06-16",
-    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building; not room/share housing.",
-    why:"Verified detail page lists studio-to-2-bedroom floor plans, with rents starting at $1,650/month."
-  }
-]
+    why:"Studio-to-2-bedroom plans starting at $1,650/month." }
+];
 
 const STATUSES = [
   {id:"to_contact", label:"To contact"},
@@ -304,39 +344,76 @@ const STATUSES = [
   {id:"shortlist",  label:"Shortlist"},
   {id:"passed",     label:"Passed"}
 ];
-const STATUS_WEIGHT = {to_contact:1.0, viewing:0.92, shortlist:0.84, contacted:0.62, passed:0.05};
 const BUDGET_CAP = 1350;
+const NEW_BADGE_DAYS = 7;
+const STALE_MS = 5 * 60 * 1000;  // auto-crawl on load if last crawl is older than 5 min
 
-/* ---- state + persistence (uses artifact storage if present, else memory) ---- */
-const STORE_KEY="halton_board_statuses";
-let state={ maxRent:1350, statuses:{} };
+/* ---------- storage helpers ---------- */
+function load(key, fallback){
+  try{ const v = localStorage.getItem(key); return v==null ? fallback : JSON.parse(v); }
+  catch(e){ return fallback; }
+}
+function save(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+}
+
+let state = {
+  maxRent: 1350,
+  approved: load(STORE.approved, null) || SEED.slice(),
+  statuses: load(STORE.statuses, {}),
+  pending:  load(STORE.pending, []),
+  rejected: load(STORE.rejected, []),
+  lastCrawl:load(STORE.lastCrawl, null),
+  crawling: false,
+  noteHidden: load(STORE.noteHidden, false),
+  reviewCollapsed: load(STORE.reviewCollapsed, false)
+};
+// First-load persistence
+save(STORE.approved, state.approved);
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function money(n){ return "$"+Number(n).toLocaleString("en-CA"); }
 function getStatus(id){ return state.statuses[id] || "to_contact"; }
-async function loadStatuses(){
-  try{ if(!window.storage) return {}; const r=await window.storage.get(STORE_KEY); return (r&&r.value)?JSON.parse(r.value):{}; }
-  catch(e){ return {}; }
-}
-async function saveStatuses(){ try{ if(window.storage) await window.storage.set(STORE_KEY, JSON.stringify(state.statuses)); }catch(e){} }
-
-/* ---- helpers ---- */
-function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
-function money(n){ return "$"+n.toLocaleString("en-CA"); }
 function budgetTier(l){ if(l.rent==null) return "tbd"; return l.rent<=BUDGET_CAP ? "ok":"over"; }
-function visibleSorted(){
-  return LISTINGS.filter(l => l.rent==null || l.rent<=state.maxRent);
+function visibleListings(){
+  return state.approved.filter(l => l.rent==null || l.rent<=state.maxRent);
 }
+function isNew(l){
+  if(!l.dateAdded) return false;
+  const added = new Date(l.dateAdded).getTime();
+  if(!isFinite(added)) return false;
+  return (Date.now() - added) < NEW_BADGE_DAYS*86400*1000;
+}
+function relTime(iso){
+  if(!iso) return "never";
+  const ms = Date.now() - new Date(iso).getTime();
+  if(!isFinite(ms)) return "—";
+  const min = Math.floor(ms/60000);
+  if(min<1) return "just now";
+  if(min<60) return min+"m ago";
+  const hr = Math.floor(min/60);
+  if(hr<24) return hr+"h ago";
+  const d = Math.floor(hr/24);
+  return d+"d ago";
+}
+function keyOf(c){ return c.externalId || c.url || (c.title+"|"+c.town); }
 
-/* ---- card ---- */
+/* ---------- card render ---------- */
 function cardHTML(l){
   const tier=budgetTier(l);
   const priceBlock = l.rent==null
     ? `<span class="price tbd tnum">Price TBD</span><span class="badge tbd">Confirm price</span>`
     : `<span class="price tnum">${money(l.rent)}<span class="pm">/mo</span></span>` +
-      (tier==="ok" ? `<span class="badge ok">✓ ≤ $1,350</span>` : `<span class="badge over">Over $1,300</span>`);
+      (tier==="ok" ? `<span class="badge ok">✓ ≤ $1,350</span>` : `<span class="badge over">Over $1,350</span>`);
   const opts=STATUSES.map(s=>`<option value="${s.id}"${getStatus(l.id)===s.id?" selected":""}>${esc(s.label)}</option>`).join("");
+  const newBadge = isNew(l) ? `<span class="new-flag">New</span>` : "";
   return `
-  <article class="card ${tier==="ok"?"is-ok":""} ${getStatus(l.id)==="passed"?"is-passed":""}" data-card="${l.id}">
+  <article class="card ${tier==="ok"?"is-ok":""} ${getStatus(l.id)==="passed"?"is-passed":""}" data-card="${esc(l.id)}">
+    ${newBadge}
     <div class="c-top">
       <span class="town">${esc(l.town)}</span>
+      <span class="src-tag">${esc(l.platform||"manual")}</span>
     </div>
     <h3 class="c-type">${esc(l.type)}</h3>
     <p class="c-area">${esc(l.area)}</p>
@@ -344,68 +421,261 @@ function cardHTML(l){
     <div class="chips">
       <span class="chip"><span class="k">Beds</span> ${esc(l.beds)}</span>
       <span class="chip"><span class="k">Bath</span> ${esc(l.baths)}</span>
-      <span class="chip"><span class="k">Move-in</span> ${esc(l.available)}</span>
-      <span class="chip"><span class="k">Incl.</span> ${esc(l.included)}</span>
+      ${l.available?`<span class="chip"><span class="k">Move-in</span> ${esc(l.available)}</span>`:""}
+      ${l.included?`<span class="chip"><span class="k">Incl.</span> ${esc(l.included)}</span>`:""}
     </div>
-    <p class="why">${esc(l.why)}</p>
+    ${l.why?`<p class="why">${esc(l.why)}</p>`:""}
     <div class="c-foot">
       <a class="visit" href="${esc(l.url)}" target="_blank" rel="noopener">View listing ↗</a>
       <span class="status-wrap"><span class="dot" style="background:var(--s-${getStatus(l.id)}-dot)"></span>
-        <select class="status" data-id="${l.id}" data-s="${getStatus(l.id)}" aria-label="Status for ${esc(l.type)}">${opts}</select>
+        <select class="status" data-id="${esc(l.id)}" data-s="${getStatus(l.id)}" aria-label="Status">${opts}</select>
       </span>
+      <button class="delete-btn" data-del="${esc(l.id)}" title="Remove from board">✕</button>
     </div>
-    <p class="contact"><b>Contact:</b> ${esc(l.contact)} · <b>Source:</b> ${esc(l.platform)}</p>
+    ${l.contact?`<p class="contact"><b>Contact:</b> ${esc(l.contact)}</p>`:""}
   </article>`;
 }
 
-/* ---- views ---- */
-function sourceCardHTML(){
-  return `
-  <article class="card source-card" aria-label="Facebook Marketplace manual search entry">
-    <div class="c-top">
-      <span class="town">Facebook Marketplace</span>
-      <span class="dist">Manual search entry</span>
-    </div>
-    <h3 class="c-type">Facebook Marketplace — town-limited search only</h3>
-    <p class="c-area">Use this as a manual search entry point for Fergus, Acton, Milton, Oakville, and Burlington only.</p>
-    <div class="c-foot">
-      <a class="visit" href="https://www.facebook.com/marketplace/burlington/search?query=self%20contained%20room%20unit&maxPrice=1350" target="_blank" rel="noopener">View Facebook Marketplace ↗</a>
-    </div>
-  </article>`;
-}
 function renderList(){
-  const arr=visibleSorted();
-  return `<div class="list">${sourceCardHTML()}${arr.map(cardHTML).join("")}</div>
-    <p class="hint">${arr.length} self-contained ${arr.length===1?"home":"homes"} shown.</p>`;
+  const arr=visibleListings();
+  return `<div class="list">${arr.map(cardHTML).join("")}</div>
+    <p class="hint">${arr.length} of ${state.approved.length} approved listings shown · ${state.pending.length} pending</p>`;
 }
 
+/* ---------- review queue render ---------- */
+function reviewCardHTML(c){
+  const priceBlock = c.rent==null
+    ? `<span class="p tbd">Price unknown</span>`
+    : `<span class="p tnum">${money(c.rent)}</span>${c.beds?`<span class="b">· ${esc(c.beds)} bed</span>`:""}`;
+  return `
+  <div class="rcard" data-pkey="${esc(keyOf(c))}">
+    <div class="meta">
+      <span class="src">${esc(c.source||"crawler")}</span>
+      <span class="twn">${esc(c.town)}</span>
+    </div>
+    <h4>${esc(c.title || c.type || "Listing")}</h4>
+    ${c.address?`<p class="addr">${esc(c.address)}</p>`:""}
+    <div class="pr">${priceBlock}</div>
+    <div class="actions">
+      <a class="view" href="${esc(c.url)}" target="_blank" rel="noopener">View ↗</a>
+      <button class="approve" data-act="approve">Approve</button>
+      <button class="reject"  data-act="reject">Reject</button>
+    </div>
+  </div>`;
+}
+function renderReview(){
+  const wrap=document.getElementById("review");
+  const body=document.getElementById("reviewBody");
+  const ct=document.getElementById("reviewCount");
+  ct.textContent = state.pending.length;
+  wrap.classList.toggle("collapsed", state.reviewCollapsed);
+  if(state.pending.length === 0){
+    body.innerHTML = `<div class="empty">No new candidates. Tap the refresh button to crawl.</div>`;
+  } else {
+    body.innerHTML = state.pending.map(reviewCardHTML).join("");
+  }
+}
+
+/* ---------- main render ---------- */
 function render(){
   document.getElementById("view").innerHTML = renderList();
-  // budget gauge fill + count
+  renderReview();
   const slider=document.getElementById("budget");
   const pct=((slider.value-slider.min)/(slider.max-slider.min))*100;
   slider.style.setProperty("--fill", pct+"%");
   document.getElementById("budgetVal").textContent=money(+slider.value);
-  const shown=visibleSorted().length;
-  document.getElementById("budgetCount").textContent=`${shown} of ${LISTINGS.length}`;
+  document.getElementById("budgetCount").textContent=`${visibleListings().length} of ${state.approved.length}`;
+  document.getElementById("lastCrawl").textContent = "Updated " + relTime(state.lastCrawl);
+  // FAB pending badge
+  const fab=document.getElementById("fab");
+  const badge=document.getElementById("fabBadge");
+  if(state.pending.length>0){
+    fab.classList.add("has-pending");
+    badge.style.display="grid";
+    badge.textContent = state.pending.length;
+  } else {
+    fab.classList.remove("has-pending");
+    badge.style.display="none";
+  }
+  document.getElementById("fabMeta").textContent =
+    state.crawling ? "Crawling sources…" : `Last crawl: ${relTime(state.lastCrawl)}`;
 }
 
-/* ---- events ---- */
+/* ---------- toast ---------- */
+let toastTimer=null;
+function toast(msg, kind){
+  const el=document.getElementById("toast");
+  el.className = "toast show" + (kind?(" "+kind):"");
+  el.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ el.className="toast"; }, 4200);
+}
+
+/* ---------- crawl ---------- */
+async function crawl(manual){
+  if(state.crawling) return;
+  state.crawling = true;
+  const fab=document.getElementById("fab");
+  fab.classList.add("busy");
+  fab.disabled = true;
+  document.getElementById("crawlStatus").className="crawl-status busy";
+  document.getElementById("crawlMsg").textContent = "Crawling REALTOR.ca · Skyline · Apartments.com…";
+  render();
+
+  try {
+    const res = await fetch("/api/crawl", { cache:"no-store" });
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || "crawl failed");
+
+    // dedup against approved + rejected + already pending
+    const approvedKeys = new Set(state.approved.map(a => a.url));
+    const approvedExt  = new Set(state.approved.map(a => a.externalId || a.url));
+    const rejectedSet  = new Set(state.rejected);
+    const pendingSet   = new Set(state.pending.map(keyOf));
+
+    const fresh = [];
+    for(const c of (data.listings || [])){
+      const k = keyOf(c);
+      if(approvedKeys.has(c.url) || approvedExt.has(c.externalId) || rejectedSet.has(k) || pendingSet.has(k)) continue;
+      fresh.push(c);
+    }
+    state.pending = state.pending.concat(fresh);
+    state.lastCrawl = new Date().toISOString();
+    save(STORE.pending, state.pending);
+    save(STORE.lastCrawl, state.lastCrawl);
+
+    const stats = data.stats || {};
+    const sourceBits = [
+      stats.skyline   != null ? `Skyline ${stats.skyline}`     : null,
+      stats.realtor   != null ? `Realtor ${stats.realtor}`     : null,
+      stats.apartments!= null ? `Apartments ${stats.apartments}` : null
+    ].filter(Boolean).join(" · ");
+    const errBits = [];
+    if(stats.errors){
+      if(stats.errors.skyline)    errBits.push("Skyline failed");
+      if(stats.errors.realtor)    errBits.push("Realtor blocked");
+      if(stats.errors.apartments) errBits.push("Apartments blocked");
+    }
+    document.getElementById("crawlStatus").className = errBits.length ? "crawl-status error" : "crawl-status";
+    document.getElementById("crawlMsg").textContent = sourceBits + (errBits.length ? " · " + errBits.join(", ") : "");
+
+    if(fresh.length === 0){
+      toast(`No new candidates · ${sourceBits || "0 results"}`, "ok");
+    } else {
+      toast(`${fresh.length} new candidate${fresh.length===1?"":"s"} found → review queue`, "ok");
+      state.reviewCollapsed = false;
+      save(STORE.reviewCollapsed, false);
+    }
+  } catch (e) {
+    toast("Failed to find new places. We'll redo searching it shortly.", "err");
+    document.getElementById("crawlStatus").className="crawl-status error";
+    document.getElementById("crawlMsg").textContent = "Failed to find new places. We'll redo searching it shortly.";
+  } finally {
+    state.crawling = false;
+    fab.classList.remove("busy");
+    fab.disabled = false;
+    render();
+  }
+}
+
+/* ---------- approve / reject ---------- */
+function approveCandidate(c){
+  const id = "crawled-" + (c.externalId || (c.url||"").slice(-40) || Date.now()).replace(/[^a-z0-9\-]/gi,"-").slice(0,80);
+  const listing = {
+    id,
+    town: c.town,
+    type: c.title || "Listing · self-contained",
+    area: c.address || c.town,
+    rent: c.rent ?? null,
+    beds: c.beds || "Confirm",
+    baths: c.baths || "Confirm",
+    available: "Confirm",
+    included: "",
+    platform: c.source,
+    url: c.url,
+    externalId: c.externalId || c.url,
+    contact: "Contact via source",
+    dateAdded: new Date().toISOString().slice(0,10),
+    why: "Auto-discovered by crawler — verify the listing page before contact."
+  };
+  state.approved.push(listing);
+  save(STORE.approved, state.approved);
+}
+function rejectCandidate(c){
+  const k = keyOf(c);
+  if(!state.rejected.includes(k)) state.rejected.push(k);
+  save(STORE.rejected, state.rejected);
+}
+function removePending(c){
+  const k = keyOf(c);
+  state.pending = state.pending.filter(x => keyOf(x) !== k);
+  save(STORE.pending, state.pending);
+}
+
+/* ---------- events ---------- */
 document.getElementById("budget").addEventListener("input",e=>{ state.maxRent=+e.target.value; render(); });
+
 document.getElementById("view").addEventListener("change",e=>{
   const sel=e.target.closest("select.status[data-id]"); if(!sel)return;
-  state.statuses[sel.dataset.id]=sel.value; saveStatuses(); render();
+  state.statuses[sel.dataset.id]=sel.value;
+  save(STORE.statuses, state.statuses);
+  render();
 });
-document.getElementById("noteX").addEventListener("click",()=>{ document.getElementById("note").style.display="none"; });
+document.getElementById("view").addEventListener("click",e=>{
+  const del=e.target.closest("button[data-del]"); if(!del)return;
+  if(!confirm("Remove this listing from your board?")) return;
+  state.approved = state.approved.filter(a => a.id !== del.dataset.del);
+  save(STORE.approved, state.approved);
+  render();
+});
+
+document.getElementById("reviewHead").addEventListener("click",()=>{
+  state.reviewCollapsed = !state.reviewCollapsed;
+  save(STORE.reviewCollapsed, state.reviewCollapsed);
+  render();
+});
+document.getElementById("reviewBody").addEventListener("click",e=>{
+  const btn=e.target.closest("button[data-act]"); if(!btn)return;
+  const card=btn.closest(".rcard"); if(!card)return;
+  const key=card.dataset.pkey;
+  const c=state.pending.find(x => keyOf(x) === key);
+  if(!c) return;
+  if(btn.dataset.act === "approve"){
+    approveCandidate(c);
+    removePending(c);
+    toast("Added to board · NEW badge will fade after 7 days", "ok");
+  } else if(btn.dataset.act === "reject"){
+    rejectCandidate(c);
+    removePending(c);
+    toast("Rejected — won't reappear in future crawls", "");
+  }
+  render();
+});
+
+document.getElementById("noteX").addEventListener("click",()=>{
+  document.getElementById("note").style.display="none";
+  save(STORE.noteHidden, true);
+});
+if(state.noteHidden){ document.getElementById("note").style.display="none"; }
+
+document.getElementById("fab").addEventListener("click",()=>crawl(true));
 
 document.getElementById("foot").innerHTML =
-  `<b>Cleaned seed list updated Jun 16, 2026.</b> Rooms / shared housing are intentionally excluded. ` +
-  `Facebook Marketplace is allowed as a source only after the listing is verified as private/self-contained and located in Fergus, Acton, Milton, Oakville, or Burlington. ` +
-  `Every card must link to a specific property/detail page, not a search-results page, and Facebook-expanded Toronto/Hamilton/other-area results should be ignored. ` +
-  `Prices &amp; availability change daily, so verify the detail page before reaching out, and never send a deposit before viewing in person or by video. ` +
-  `To add or edit homes, update the <b>LISTINGS</b> array in this file. Status changes save automatically. This mobile-first version uses list view only.`;
+  `<b>Halton Home Board — Live edition.</b> Crawler runs on demand from the floating refresh button, ` +
+  `pulling self-contained candidates from REALTOR.ca, Skyline Living, and Apartments.com. ` +
+  `Approved listings sync to your browser's local storage so they persist between visits. ` +
+  `Rejected candidates are remembered and won't re-appear. Always verify the listing detail page before contacting a landlord, ` +
+  `and never send a deposit before viewing in person or by video. Source code: <b>github.com/imseon-k/rental-board</b>.`;
 
-(async function init(){ state.statuses = await loadStatuses(); render(); })();
+/* ---------- init: auto-crawl if stale ---------- */
+(function init(){
+  render();
+  const last = state.lastCrawl ? new Date(state.lastCrawl).getTime() : 0;
+  if(Date.now() - last > STALE_MS){
+    setTimeout(()=>crawl(false), 350);
+  }
+})();
 </script>
 </body>
 </html>

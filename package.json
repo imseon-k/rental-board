@@ -1,0 +1,12 @@
+{
+  "name": "rental-board",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Halton Home Board — live rental listings tracker with crawler-fed review queue.",
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
