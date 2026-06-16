@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Halton Home Board · Live</title>
+<title>Rental Board · Live</title>
 <meta name="description" content="Live rental investigation board for Fergus, Acton, Milton, Oakville, and Burlington. Auto-crawled from REALTOR.ca, Skyline Living, and Apartments.com." />
 <style>
   :root{
@@ -19,16 +19,16 @@
     --line-2:rgba(255,255,255,.08);
     --primary:#90CAF9;
     --primary-strong:#42A5F5;
-    --ok:#66BB6A; --ok-soft:rgba(102,187,106,.14); --ok-line:rgba(102,187,106,.42);
-    --over:#FFB74D; --over-soft:rgba(255,183,77,.14); --over-line:rgba(255,183,77,.38);
-    --tbd:#CE93D8; --tbd-soft:rgba(206,147,216,.14); --tbd-line:rgba(206,147,216,.38);
-    --err:#EF5350; --err-soft:rgba(239,83,80,.14); --err-line:rgba(239,83,80,.38);
+    --ok:#64B5F6; --ok-soft:rgba(100,181,246,.14); --ok-line:rgba(100,181,246,.42);
+    --over:#607D8B; --over-soft:rgba(96,125,139,.14); --over-line:rgba(96,125,139,.40);
+    --tbd:#82B1FF; --tbd-soft:rgba(130,177,255,.14); --tbd-line:rgba(130,177,255,.40);
+    --err:#0288D1; --err-soft:rgba(2,136,209,.16); --err-line:rgba(2,136,209,.55);
     --shadow:0 1px 1px rgba(0,0,0,.28), 0 10px 28px -16px rgba(0,0,0,.72);
     --r:16px;
     --s-to_contact-bg:rgba(144,202,249,.14); --s-to_contact-fg:#90CAF9; --s-to_contact-dot:#42A5F5;
-    --s-contacted-bg:rgba(255,183,77,.14); --s-contacted-fg:#FFB74D; --s-contacted-dot:#FFA726;
-    --s-viewing-bg:rgba(206,147,216,.14); --s-viewing-fg:#CE93D8; --s-viewing-dot:#AB47BC;
-    --s-shortlist-bg:rgba(102,187,106,.14); --s-shortlist-fg:#81C784; --s-shortlist-dot:#66BB6A;
+    --s-contacted-bg:rgba(100,181,246,.14); --s-contacted-fg:#64B5F6; --s-contacted-dot:#2196F3;
+    --s-viewing-bg:rgba(130,177,255,.14); --s-viewing-fg:#82B1FF; --s-viewing-dot:#448AFF;
+    --s-shortlist-bg:rgba(2,136,209,.16); --s-shortlist-fg:#4FC3F7; --s-shortlist-dot:#0288D1;
     --s-passed-bg:rgba(255,255,255,.08); --s-passed-fg:rgba(255,255,255,.50); --s-passed-dot:rgba(255,255,255,.38);
   }
   *{box-sizing:border-box}
@@ -62,10 +62,10 @@
   .budget .count{flex:0 1 auto;font-size:11.5px;color:var(--ink-3);font-weight:500;white-space:nowrap}
 
   .crawl-status{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-3)}
-  .crawl-status .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(102,187,106,.7);animation:ping 2.4s infinite}
+  .crawl-status .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(100,181,246,.7);animation:ping 2.4s infinite}
   .crawl-status.error .dot{background:var(--err);animation:none}
   .crawl-status.busy .dot{background:var(--primary);animation:none}
-  @keyframes ping{0%{box-shadow:0 0 0 0 rgba(102,187,106,.7)}80%,100%{box-shadow:0 0 0 8px rgba(102,187,106,0)}}
+  @keyframes ping{0%{box-shadow:0 0 0 0 rgba(100,181,246,.7)}80%,100%{box-shadow:0 0 0 8px rgba(100,181,246,0)}}
 
   .note{margin:14px 16px 0;background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);
     border-left:3px solid var(--over);border-radius:12px;padding:11px 12px;display:flex;gap:10px}
@@ -100,7 +100,7 @@
   .rcard .actions button,.rcard .actions a{flex:1;font:600 11.5px/1.15 var(--font-sans);padding:8px 8px;border-radius:8px;
     cursor:pointer;text-decoration:none;text-align:center;border:1px solid var(--line);background:transparent;color:var(--ink-2);transition:.12s}
   .rcard .actions .approve{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-line)}
-  .rcard .actions .approve:hover{background:rgba(102,187,106,.22)}
+  .rcard .actions .approve:hover{background:rgba(100,181,246,.22)}
   .rcard .actions .reject{color:var(--ink-3)}
   .rcard .actions .reject:hover{background:rgba(255,255,255,.06)}
   .rcard .actions .view{color:var(--primary);border-color:rgba(144,202,249,.4)}
@@ -214,7 +214,7 @@
 <div class="app">
   <header>
     <div class="brand">
-      <h1>Halton Home Board<span class="live">Live</span></h1>
+      <h1>Rental Board<span class="live">Live</span></h1>
       <span class="meta tnum" id="lastCrawl">Loading…</span>
     </div>
     <p class="sub">Live investigation board — <b>auto-crawled</b> from REALTOR.ca, Skyline Living, and Apartments.com. Self-contained units only · target <b>≤&nbsp;$1,350</b> · Halton + Fergus / Acton.</p>
@@ -271,7 +271,7 @@
 
 <script>
 /* =========================================================================
-   Halton Home Board — Live edition
+   Rental Board — Live edition
    - Approved listings live in localStorage (seeded on first load from SEED).
    - The /api/crawl endpoint returns fresh candidates from REALTOR.ca,
      Skyline Living, and Apartments.com.
@@ -662,7 +662,7 @@ if(state.noteHidden){ document.getElementById("note").style.display="none"; }
 document.getElementById("fab").addEventListener("click",()=>crawl(true));
 
 document.getElementById("foot").innerHTML =
-  `<b>Halton Home Board — Live edition.</b> Crawler runs on demand from the floating refresh button, ` +
+  `<b>Rental Board — Live edition.</b> Crawler runs on demand from the floating refresh button, ` +
   `pulling self-contained candidates from REALTOR.ca, Skyline Living, and Apartments.com. ` +
   `Approved listings sync to your browser's local storage so they persist between visits. ` +
   `Rejected candidates are remembered and won't re-appear. Always verify the listing detail page before contacting a landlord, ` +
