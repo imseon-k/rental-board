@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Halton Home Board</title>
+<style>
+  :root{
+    --font-sans:"Product Sans","Google Sans","Roboto","Arial",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color-scheme:dark;
+    /* Dark-first palette: shadcn-style tokens using Material UI dark values */
+    --paper:#121212;          /* MUI background.default */
+    --card:#1E1E1E;           /* elevated dark surface */
+    --card-2:#242424;
+    --ink:#FFFFFF;            /* MUI text.primary */
+    --ink-2:rgba(255,255,255,.70);  /* MUI text.secondary */
+    --ink-3:rgba(255,255,255,.50);  /* MUI text.disabled */
+    --line:rgba(255,255,255,.12);   /* MUI divider */
+    --line-2:rgba(255,255,255,.08);
+    --primary:#90CAF9;        /* MUI blue 200 */
+    --primary-strong:#42A5F5; /* MUI blue 400 */
+    --ok:#66BB6A; --ok-soft:rgba(102,187,106,.14); --ok-line:rgba(102,187,106,.42);
+    --over:#FFB74D; --over-soft:rgba(255,183,77,.14); --over-line:rgba(255,183,77,.38);
+    --tbd:#CE93D8; --tbd-soft:rgba(206,147,216,.14); --tbd-line:rgba(206,147,216,.38);
+    --shadow:0 1px 1px rgba(0,0,0,.28), 0 10px 28px -16px rgba(0,0,0,.72);
+    --r:16px;
+    /* status palette: Material UI dark-compatible muted chips */
+    --s-to_contact-bg:rgba(144,202,249,.14); --s-to_contact-fg:#90CAF9; --s-to_contact-dot:#42A5F5;
+    --s-contacted-bg:rgba(255,183,77,.14); --s-contacted-fg:#FFB74D; --s-contacted-dot:#FFA726;
+    --s-viewing-bg:rgba(206,147,216,.14); --s-viewing-fg:#CE93D8; --s-viewing-dot:#AB47BC;
+    --s-shortlist-bg:rgba(102,187,106,.14); --s-shortlist-fg:#81C784; --s-shortlist-dot:#66BB6A;
+    --s-passed-bg:rgba(255,255,255,.08); --s-passed-fg:rgba(255,255,255,.50); --s-passed-dot:rgba(255,255,255,.38);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;max-width:100%;overflow-x:hidden;background:var(--paper);color:var(--ink);
+    font-family:var(--font-sans);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .app{width:100%;max-width:468px;margin:0 auto;min-height:100dvh;background:var(--paper);
+    padding:0 0 40px;position:relative;overflow-x:hidden}
+  .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:30;background:rgba(18,18,18,.84);
+    backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);
+    border-bottom:1px solid var(--line);padding:14px 16px 10px}
+  .brand{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  h1{font-family:var(--font-sans);font-weight:700;font-size:21px;letter-spacing:-.01em;margin:0;line-height:1.12}
+  .brand .meta{font-size:11px;color:var(--ink-3);font-weight:500;white-space:nowrap;letter-spacing:.01em}
+  .sub{margin:6px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.45;letter-spacing:0}
+  .sub b{color:var(--ink);font-weight:600}
+
+  /* controls */
+  .controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+  .ctl-row{display:flex;align-items:center;gap:8px;min-width:0}
+  .label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700;flex:0 0 auto;width:34px}
+  .seg{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding:1px;flex:1}
+  .seg::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--ink-2);
+    font:600 13px/1.15 var(--font-sans);padding:8px 12px;border-radius:999px;cursor:pointer;
+    white-space:nowrap;transition:.15s;display:inline-flex;align-items:center;gap:5px}
+  .pill:hover{border-color:rgba(144,202,249,.55);background:rgba(144,202,249,.08)}
+  .pill[aria-pressed="true"]{background:var(--primary);color:#0B0F14;border-color:var(--primary)}
+  .pill .star{font-size:11px;transform:translateY(-.5px)}
+  .budget{display:flex;align-items:center;gap:10px;min-width:0;width:100%}
+  .budget input[type=range]{flex:1 1 auto;min-width:0;-webkit-appearance:none;appearance:none;height:4px;border-radius:999px;
+    background:linear-gradient(90deg,var(--ok) 0,var(--ok) var(--fill,30%),var(--line) var(--fill,30%),var(--line) 100%);outline:none}
+  .budget input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--card);border:2px solid var(--primary);box-shadow:var(--shadow);cursor:pointer;margin-top:0}
+  .budget input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--card);border:2px solid var(--primary);cursor:pointer}
+  .budget .val{flex:0 0 auto;font:700 14px/1.1 var(--font-sans);letter-spacing:-.01em;color:var(--ink);min-width:58px;text-align:right}
+  .budget .count{flex:0 1 auto;font-size:11.5px;color:var(--ink-3);min-width:auto;text-align:right;font-weight:500;white-space:nowrap}
+
+  /* ---------- reality banner ---------- */
+  .note{margin:14px 16px 0;background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);
+    border-left:3px solid var(--over);border-radius:12px;padding:11px 12px;display:flex;gap:10px}
+  .note .ico{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--over-soft);color:var(--over);
+    display:grid;place-items:center;font:700 12px/1 var(--font-sans);margin-top:1px}
+  .note p{margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+  .note b{color:var(--ink);font-weight:600}
+  .note button{margin-left:auto;align-self:flex-start;border:0;background:transparent;color:var(--ink-3);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
+
+  /* ---------- list ---------- */
+  .list{padding:14px 16px 0;display:flex;flex-direction:column;gap:12px;width:100%;min-width:0}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);
+    padding:14px 14px 12px;position:relative;overflow:hidden;width:100%;min-width:0}
+  .source-card{border-color:rgba(144,202,249,.24);background:linear-gradient(180deg,rgba(144,202,249,.08),var(--card))}
+  .source-card .c-area{margin-bottom:11px}
+  .card.is-ok{border-color:var(--ok-line)}
+  .card.is-ok::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ok)}
+  .card.is-passed{opacity:.62}
+  .c-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px;min-width:0}
+  .town{font:600 11.5px/1.1 var(--font-sans);color:var(--primary);background:rgba(144,202,249,.12);padding:5px 9px;border-radius:999px}
+  .dist{font-size:11px;color:var(--ink-3);font-weight:500}
+  .rec{margin-left:auto;display:inline-flex;align-items:center;gap:4px;background:var(--primary);color:#0B0F14;
+    font:700 11.5px/1.1 var(--font-sans);padding:5px 9px;border-radius:999px;cursor:help}
+  .rec .s{font-size:9px;opacity:.8;font-weight:600}
+
+  .c-type{font-family:var(--font-sans);font-weight:700;font-size:16.5px;letter-spacing:-.005em;margin:0 0 3px;line-height:1.22;overflow-wrap:anywhere}
+  .c-area{font-size:12.5px;color:var(--ink-2);line-height:1.45;margin:0 0 10px;overflow-wrap:anywhere}
+
+  .price-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .price{font-family:var(--font-sans);font-weight:700;font-size:23px;letter-spacing:-.015em;line-height:1.05}
+  .price .pm{font-size:12px;color:var(--ink-3);font-weight:600;margin-left:1px}
+  .price.tbd{font-size:15px;color:var(--tbd)}
+  .badge{font:700 10px/1.1 var(--font-sans);letter-spacing:.03em;padding:5px 8px;border-radius:7px;text-transform:uppercase}
+  .badge.ok{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok-line)}
+  .badge.over{background:var(--over-soft);color:var(--over);border:1px solid var(--over-line)}
+  .badge.tbd{background:var(--tbd-soft);color:var(--tbd);border:1px solid var(--tbd-line)}
+  .price-note{font-size:11px;color:var(--ink-3);font-weight:500}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-width:0}
+  .chip{font-size:11.5px;color:var(--ink-2);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:5px 8px;line-height:1.2;display:inline-flex;gap:5px;align-items:center;max-width:100%;overflow-wrap:anywhere}
+  .chip .k{color:var(--ink-3)}
+  .why{font-size:12px;color:var(--ink-2);line-height:1.45;background:var(--line-2);border-radius:9px;padding:8px 10px;margin-bottom:11px;overflow-wrap:anywhere}
+
+  .c-foot{display:flex;align-items:center;gap:9px;min-width:0}
+  .visit{flex:1 1 auto;min-width:0;text-align:center;text-decoration:none;border:1px solid var(--primary);color:var(--primary);
+    font:600 13px/1.15 var(--font-sans);padding:10px 12px;border-radius:10px;transition:.15s;background:transparent}
+  .visit:hover{background:var(--primary);color:#0B0F14}
+  .status-wrap{flex:0 1 auto;min-width:0;position:relative;display:inline-flex;align-items:center}
+  .status-wrap::after{content:"▾";position:absolute;right:9px;font-size:10px;color:inherit;pointer-events:none;opacity:.7}
+  select.status{-webkit-appearance:none;appearance:none;border:1px solid transparent;border-radius:10px;
+    font:600 12.5px/1.15 var(--font-sans);padding:10px 26px 10px 24px;cursor:pointer;background-repeat:no-repeat;max-width:145px}
+  .status-wrap .dot{position:absolute;left:9px;width:8px;height:8px;border-radius:50%;pointer-events:none}
+  /* per-status colors applied via attribute */
+  select.status[data-s="to_contact"]{background:var(--s-to_contact-bg);color:var(--s-to_contact-fg)}
+  select.status[data-s="contacted"]{background:var(--s-contacted-bg);color:var(--s-contacted-fg)}
+  select.status[data-s="viewing"]{background:var(--s-viewing-bg);color:var(--s-viewing-fg)}
+  select.status[data-s="shortlist"]{background:var(--s-shortlist-bg);color:var(--s-shortlist-fg)}
+  select.status[data-s="passed"]{background:var(--s-passed-bg);color:var(--s-passed-fg)}
+
+  .contact{font-size:11.5px;color:var(--ink-3);margin:9px 0 0;line-height:1.45}
+  .contact b{color:var(--ink-2);font-weight:600}
+
+  .hint{font-size:11.5px;color:var(--ink-3);text-align:center;padding:2px 16px 0}
+  footer{margin:20px 16px 0;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);line-height:1.55}
+  footer b{color:var(--ink-2);font-weight:600}
+  button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+  @media (max-width:380px){
+    header{padding-left:14px;padding-right:14px}
+    .list{padding-left:14px;padding-right:14px}
+    .budget{gap:8px}
+    .budget .val{min-width:52px;font-size:12.5px}
+    .budget .count{display:none}
+    .c-foot{flex-direction:column;align-items:stretch}
+    .status-wrap, select.status{width:100%;max-width:none}
+    .visit{width:100%}
+  }
+  @media (max-width:340px){
+    .brand{align-items:flex-start;flex-direction:column;gap:4px}
+    .label{width:30px}
+    .price-row{flex-wrap:wrap}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <h1>Halton Home Board</h1>
+      <span class="meta tnum" id="updated">Jun 16, 2026</span>
+    </div>
+    <p class="sub">Verified detail pages only — <b>no roommates, no shared baths/kitchens</b>. Facebook Marketplace allowed only for private/self-contained units. Target <b>≤&nbsp;$1,300</b> · move-in Jul–Aug.</p>
+
+    <div class="controls">
+      <div class="ctl-row">
+        <span class="label">Max</span>
+        <div class="budget" style="flex:1">
+          <input type="range" id="budget" min="1100" max="2000" step="25" value="1350" aria-label="Maximum rent" />
+          <span class="val tnum" id="budgetVal">$1,350</span>
+          <span class="count tnum" id="budgetCount"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="note" id="note">
+    <span class="ico">!</span>
+    <p><b>Data rule.</b> Cards are included only when the “View listing” button opens a specific property/detail page. Facebook Marketplace is allowed, but only for private/self-contained studio, bachelor, basement, or apartment units. Shared rooms, room rentals, roommates, shared bath, and shared kitchen listings are excluded.</p>
+    <button id="noteX" aria-label="Dismiss">×</button>
+  </div>
+
+  <div id="view"></div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* =========================================================================
+   DATA — self-contained units only (no roommates / no shared bath or kitchen).
+   Facebook Marketplace is allowed only when the URL is a specific listing detail page,
+   the listing town/address is Fergus, Acton, Milton, Oakville, or Burlington,
+   and the description confirms a private/self-contained unit.
+   Compiled & verified Jun 16, 2026. Prices/availability change — confirm on URL.
+   To add or edit a home, copy an object below. Fields:
+     rent: number (monthly CAD) from the verified detail page.
+     dateAdded: ISO date this entered the list (drives "Newest").
+     verification: short note on source/detail-page check.
+
+   Facebook Marketplace exclusion checklist:
+     - EXCLUDE: room for rent, private room, shared room, roommate wanted, roomie,
+       shared kitchen, shared bath, den only, basement room only.
+     - INCLUDE: private/self-contained studio, bachelor, basement apartment, legal
+       basement, separate entrance unit, private kitchen/kitchenette + private bath.
+     - Do not add Marketplace category/search URLs as cards. Use specific listing URLs only.
+     - Do not add listings outside Fergus / Acton / Milton / Oakville / Burlington,
+       even if Facebook shows them after map zooming or scrolling.
+   ========================================================================= */
+const LISTINGS = [
+  {
+    id:"realtorca-milton-newell-studio-basement",
+    town:"Milton",
+    type:"Studio basement unit · self-contained",
+    area:"1206 Newell Street, Milton, ON L9T 5R4",
+    rent:1300,
+    beds:"Studio",
+    baths:"1 private",
+    available:"Confirm",
+    included:"Private separate entrance · 1 parking · shared laundry · WiFi not included",
+    platform:"REALTOR.ca",
+    url:"https://www.realtor.ca/real-estate/29654446/1206-newell-street-milton-de-dempsey-1029-de-dempsey",
+    contact:"Armin Saggu · Right At Home Realty · contact via REALTOR.ca",
+    dateAdded:"2026-06-16",
+    verification:"REALTOR.ca detail page / MLS W13042132. Studio basement unit with private separate entrance; shared laundry only, not shared room/kitchen/bath housing.",
+    why:"Best-fit verified candidate in the current dataset: self-contained Milton studio basement at the target $1,300/month budget. Confirm current availability before contacting."
+  },
+  {
+    id:"hillcrest-fergus-bachelor",
+    town:"Fergus",
+    type:"Bachelor suite · apartment building",
+    area:"250 Queen St. E., Fergus, ON N1M 2Y6",
+    rent:1275,
+    beds:"Bachelor",
+    baths:"1 private",
+    available:"Now available",
+    included:"Heat + water included · laundry facilities",
+    platform:"Skyline Living",
+    url:"https://www.skylineliving.ca/en/apartments/ontario/fergus/250-queen-st-e-fergus-on",
+    contact:"Resident Manager (226) 780-0735",
+    dateAdded:"2026-06-16",
+    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building suite; not room/share housing.",
+    why:"Lowest verified self-contained option found in the current seed set. Detail page lists a Bachelor 1 Bath suite starting at $1,275/month."
+  },
+  {
+    id:"forfar-fergus-1bed",
+    town:"Fergus",
+    type:"1-bedroom suite · apartment building",
+    area:"380 Forfar St. E., Fergus, ON N1M 1B5",
+    rent:1580,
+    beds:"1",
+    baths:"1 private",
+    available:"Now available",
+    included:"Heat + water included · laundry facilities",
+    platform:"Skyline Living",
+    url:"https://www.skylineliving.ca/en/apartments/ontario/fergus/380-forfar-st-e-fergus-on",
+    contact:"Resident Manager (226) 780-0108",
+    dateAdded:"2026-06-16",
+    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building suite; not room/share housing.",
+    why:"Verified detail page with a listed 1 Bedroom 1 Bath suite starting at $1,580/month."
+  },
+  {
+    id:"belsyde-fergus-building",
+    town:"Fergus",
+    type:"Apartment building suite",
+    area:"255-375 Belsyde Ave. E., Fergus, ON N1M 2Y2",
+    rent:1695,
+    beds:"Confirm on page",
+    baths:"1 private",
+    available:"Confirm",
+    included:"Laundry facilities · controlled entry · outdoor parking",
+    platform:"Skyline Living",
+    url:"https://www.skylineliving.ca/en/apartments/ontario/fergus/255-375-belsyde-ave-e-fergus-on",
+    contact:"Resident Manager (226) 780-0107",
+    dateAdded:"2026-06-16",
+    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building; not room/share housing.",
+    why:"Kept as a verified detail-page listing, but corrected from the previous ~$1,200 estimate to the listed $1,695/month starting price."
+  },
+  {
+    id:"burlington-square-studio",
+    town:"Burlington",
+    type:"Studio · apartment building",
+    area:"1460 Ghent Ave., Burlington, ON L7R 2H7",
+    rent:1650,
+    beds:"Studio",
+    baths:"1 private",
+    available:"Confirm",
+    included:"Heat + water + gas included · on-site laundry",
+    platform:"Apartments.com",
+    url:"https://www.apartments.com/burlington-square-burlington-on/s9p8qp5/",
+    contact:"Contact property via Apartments.com",
+    dateAdded:"2026-06-16",
+    verification:"Detail page verified Jun 16, 2026. Self-contained apartment building; not room/share housing.",
+    why:"Verified detail page lists studio-to-2-bedroom floor plans, with rents starting at $1,650/month."
+  }
+]
+
+const STATUSES = [
+  {id:"to_contact", label:"To contact"},
+  {id:"contacted",  label:"Contacted"},
+  {id:"viewing",    label:"Viewing booked"},
+  {id:"shortlist",  label:"Shortlist"},
+  {id:"passed",     label:"Passed"}
+];
+const STATUS_WEIGHT = {to_contact:1.0, viewing:0.92, shortlist:0.84, contacted:0.62, passed:0.05};
+const BUDGET_CAP = 1350;
+
+/* ---- state + persistence (uses artifact storage if present, else memory) ---- */
+const STORE_KEY="halton_board_statuses";
+let state={ maxRent:1350, statuses:{} };
+function getStatus(id){ return state.statuses[id] || "to_contact"; }
+async function loadStatuses(){
+  try{ if(!window.storage) return {}; const r=await window.storage.get(STORE_KEY); return (r&&r.value)?JSON.parse(r.value):{}; }
+  catch(e){ return {}; }
+}
+async function saveStatuses(){ try{ if(window.storage) await window.storage.set(STORE_KEY, JSON.stringify(state.statuses)); }catch(e){} }
+
+/* ---- helpers ---- */
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function money(n){ return "$"+n.toLocaleString("en-CA"); }
+function budgetTier(l){ if(l.rent==null) return "tbd"; return l.rent<=BUDGET_CAP ? "ok":"over"; }
+function visibleSorted(){
+  return LISTINGS.filter(l => l.rent==null || l.rent<=state.maxRent);
+}
+
+/* ---- card ---- */
+function cardHTML(l){
+  const tier=budgetTier(l);
+  const priceBlock = l.rent==null
+    ? `<span class="price tbd tnum">Price TBD</span><span class="badge tbd">Confirm price</span>`
+    : `<span class="price tnum">${money(l.rent)}<span class="pm">/mo</span></span>` +
+      (tier==="ok" ? `<span class="badge ok">✓ ≤ $1,350</span>` : `<span class="badge over">Over $1,300</span>`);
+  const opts=STATUSES.map(s=>`<option value="${s.id}"${getStatus(l.id)===s.id?" selected":""}>${esc(s.label)}</option>`).join("");
+  return `
+  <article class="card ${tier==="ok"?"is-ok":""} ${getStatus(l.id)==="passed"?"is-passed":""}" data-card="${l.id}">
+    <div class="c-top">
+      <span class="town">${esc(l.town)}</span>
+    </div>
+    <h3 class="c-type">${esc(l.type)}</h3>
+    <p class="c-area">${esc(l.area)}</p>
+    <div class="price-row">${priceBlock}</div>
+    <div class="chips">
+      <span class="chip"><span class="k">Beds</span> ${esc(l.beds)}</span>
+      <span class="chip"><span class="k">Bath</span> ${esc(l.baths)}</span>
+      <span class="chip"><span class="k">Move-in</span> ${esc(l.available)}</span>
+      <span class="chip"><span class="k">Incl.</span> ${esc(l.included)}</span>
+    </div>
+    <p class="why">${esc(l.why)}</p>
+    <div class="c-foot">
+      <a class="visit" href="${esc(l.url)}" target="_blank" rel="noopener">View listing ↗</a>
+      <span class="status-wrap"><span class="dot" style="background:var(--s-${getStatus(l.id)}-dot)"></span>
+        <select class="status" data-id="${l.id}" data-s="${getStatus(l.id)}" aria-label="Status for ${esc(l.type)}">${opts}</select>
+      </span>
+    </div>
+    <p class="contact"><b>Contact:</b> ${esc(l.contact)} · <b>Source:</b> ${esc(l.platform)}</p>
+  </article>`;
+}
+
+/* ---- views ---- */
+function sourceCardHTML(){
+  return `
+  <article class="card source-card" aria-label="Facebook Marketplace manual search entry">
+    <div class="c-top">
+      <span class="town">Facebook Marketplace</span>
+      <span class="dist">Manual search entry</span>
+    </div>
+    <h3 class="c-type">Facebook Marketplace — town-limited search only</h3>
+    <p class="c-area">Use this as a manual search entry point for Fergus, Acton, Milton, Oakville, and Burlington only.</p>
+    <div class="c-foot">
+      <a class="visit" href="https://www.facebook.com/marketplace/burlington/search?query=self%20contained%20room%20unit&maxPrice=1350" target="_blank" rel="noopener">View Facebook Marketplace ↗</a>
+    </div>
+  </article>`;
+}
+function renderList(){
+  const arr=visibleSorted();
+  return `<div class="list">${sourceCardHTML()}${arr.map(cardHTML).join("")}</div>
+    <p class="hint">${arr.length} self-contained ${arr.length===1?"home":"homes"} shown.</p>`;
+}
+
+function render(){
+  document.getElementById("view").innerHTML = renderList();
+  // budget gauge fill + count
+  const slider=document.getElementById("budget");
+  const pct=((slider.value-slider.min)/(slider.max-slider.min))*100;
+  slider.style.setProperty("--fill", pct+"%");
+  document.getElementById("budgetVal").textContent=money(+slider.value);
+  const shown=visibleSorted().length;
+  document.getElementById("budgetCount").textContent=`${shown} of ${LISTINGS.length}`;
+}
+
+/* ---- events ---- */
+document.getElementById("budget").addEventListener("input",e=>{ state.maxRent=+e.target.value; render(); });
+document.getElementById("view").addEventListener("change",e=>{
+  const sel=e.target.closest("select.status[data-id]"); if(!sel)return;
+  state.statuses[sel.dataset.id]=sel.value; saveStatuses(); render();
+});
+document.getElementById("noteX").addEventListener("click",()=>{ document.getElementById("note").style.display="none"; });
+
+document.getElementById("foot").innerHTML =
+  `<b>Cleaned seed list updated Jun 16, 2026.</b> Rooms / shared housing are intentionally excluded. ` +
+  `Facebook Marketplace is allowed as a source only after the listing is verified as private/self-contained and located in Fergus, Acton, Milton, Oakville, or Burlington. ` +
+  `Every card must link to a specific property/detail page, not a search-results page, and Facebook-expanded Toronto/Hamilton/other-area results should be ignored. ` +
+  `Prices &amp; availability change daily, so verify the detail page before reaching out, and never send a deposit before viewing in person or by video. ` +
+  `To add or edit homes, update the <b>LISTINGS</b> array in this file. Status changes save automatically. This mobile-first version uses list view only.`;
+
+(async function init(){ state.statuses = await loadStatuses(); render(); })();
+</script>
+</body>
+</html>
