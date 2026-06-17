@@ -25,6 +25,7 @@
     --err:#0288D1; --err-soft:rgba(2,136,209,.16); --err-line:rgba(2,136,209,.55);
     --shadow:0 1px 1px rgba(0,0,0,.28), 0 10px 28px -16px rgba(0,0,0,.72);
     --r:16px;
+    --tap:48px;            /* minimum touch target */
     --s-to_contact-bg:rgba(144,202,249,.14); --s-to_contact-fg:#90CAF9; --s-to_contact-dot:#42A5F5;
     --s-contacted-bg:rgba(100,181,246,.14); --s-contacted-fg:#64B5F6; --s-contacted-dot:#2196F3;
     --s-viewing-bg:rgba(130,177,255,.14); --s-viewing-fg:#82B1FF; --s-viewing-dot:#448AFF;
@@ -35,12 +36,12 @@
   html,body{margin:0;width:100%;max-width:100%;overflow-x:hidden;background:var(--paper);color:var(--ink);
     font-family:var(--font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   .app{width:100%;max-width:468px;margin:0 auto;min-height:100dvh;background:var(--paper);
-    padding:0 0 96px;position:relative;overflow-x:hidden}
+    padding:0 0 108px;position:relative;overflow-x:hidden}
   .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 
   header{position:sticky;top:0;z-index:30;background:rgba(18,18,18,.84);
     backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);
-    border-bottom:1px solid var(--line);padding:14px 16px 10px}
+    border-bottom:1px solid var(--line);padding:14px 16px 12px}
   .brand{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
   h1{font-weight:700;font-size:21px;letter-spacing:-.01em;margin:0;line-height:1.12}
   h1 .live{font-size:9.5px;letter-spacing:.1em;color:var(--ok);margin-left:6px;vertical-align:3px;font-weight:700;
@@ -49,69 +50,56 @@
   .sub{margin:6px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.45}
   .sub b{color:var(--ink);font-weight:600}
 
-  .controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
-  .ctl-row{display:flex;align-items:center;gap:8px;min-width:0}
+  /* ---------- controls ---------- */
+  .controls{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+  .ctl-row{display:flex;align-items:center;gap:10px;min-width:0}
   .label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700;flex:0 0 auto;width:34px}
-  .budget{display:flex;align-items:center;gap:10px;min-width:0;width:100%}
-  .budget input[type=range]{flex:1 1 auto;min-width:0;-webkit-appearance:none;appearance:none;height:4px;border-radius:999px;
-    background:linear-gradient(90deg,var(--ok) 0,var(--ok) var(--fill,30%),var(--line) var(--fill,30%),var(--line) 100%);outline:none}
-  .budget input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
-    background:var(--card);border:2px solid var(--primary);box-shadow:var(--shadow);cursor:pointer;margin-top:0}
-  .budget input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--card);border:2px solid var(--primary);cursor:pointer}
+  .budget{display:flex;align-items:center;gap:12px;min-width:0;width:100%}
+  /* Slider: 48px tall hit-area, 4px visible track, 26-28px thumb */
+  .budget input[type=range]{
+    flex:1 1 auto;min-width:0;-webkit-appearance:none;appearance:none;
+    height:var(--tap);background:transparent;outline:none;cursor:pointer;margin:0;padding:0;
+  }
+  .budget input[type=range]::-webkit-slider-runnable-track{
+    height:4px;border-radius:999px;
+    background:linear-gradient(90deg,var(--ok) 0,var(--ok) var(--fill,30%),var(--line) var(--fill,30%),var(--line) 100%);
+  }
+  .budget input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;
+    background:var(--card);border:2px solid var(--primary);box-shadow:var(--shadow);cursor:pointer;margin-top:-12px;
+  }
+  .budget input[type=range]::-moz-range-track{
+    height:4px;border-radius:999px;
+    background:linear-gradient(90deg,var(--ok) 0,var(--ok) var(--fill,30%),var(--line) var(--fill,30%),var(--line) 100%);
+  }
+  .budget input[type=range]::-moz-range-thumb{
+    width:26px;height:26px;border-radius:50%;background:var(--card);border:2px solid var(--primary);cursor:pointer;
+  }
   .budget .val{flex:0 0 auto;font:700 14px/1.1 var(--font-sans);color:var(--ink);min-width:58px;text-align:right}
   .budget .count{flex:0 1 auto;font-size:11.5px;color:var(--ink-3);font-weight:500;white-space:nowrap}
 
-  .crawl-status{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-3)}
+  .crawl-status{margin-top:4px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-3);min-height:18px}
   .crawl-status .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(100,181,246,.7);animation:ping 2.4s infinite}
   .crawl-status.error .dot{background:var(--err);animation:none}
   .crawl-status.busy .dot{background:var(--primary);animation:none}
   @keyframes ping{0%{box-shadow:0 0 0 0 rgba(100,181,246,.7)}80%,100%{box-shadow:0 0 0 8px rgba(100,181,246,0)}}
 
+  /* ---------- reality banner ---------- */
   .note{margin:14px 16px 0;background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);
-    border-left:3px solid var(--over);border-radius:12px;padding:11px 12px;display:flex;gap:10px}
+    border-left:3px solid var(--over);border-radius:12px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start}
   .note .ico{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--over-soft);color:var(--over);
-    display:grid;place-items:center;font:700 12px/1 var(--font-sans);margin-top:1px}
-  .note p{margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+    display:grid;place-items:center;font:700 12px/1 var(--font-sans);margin-top:2px}
+  .note p{margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-2);align-self:center}
   .note b{color:var(--ink);font-weight:600}
-  .note button{margin-left:auto;align-self:flex-start;border:0;background:transparent;color:var(--ink-3);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
-
-  /* ---------- review queue ---------- */
-  .review{margin:14px 16px 0;background:linear-gradient(180deg,rgba(144,202,249,.10),rgba(144,202,249,.03));
-    border:1px solid rgba(144,202,249,.32);border-radius:12px;overflow:hidden}
-  .review-head{padding:10px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
-  .review-head h3{margin:0;font:700 12.5px/1.2 var(--font-sans);color:var(--primary);letter-spacing:.02em;text-transform:uppercase}
-  .review-head .ct{background:var(--primary);color:#0B0F14;font:700 11px/1 var(--font-sans);padding:3px 8px;border-radius:999px;min-width:22px;text-align:center}
-  .review-head .caret{margin-left:auto;color:var(--primary);font-size:13px;transition:.15s}
-  .review.collapsed .caret{transform:rotate(-90deg)}
-  .review.collapsed .review-body{display:none}
-  .review-body{padding:6px 8px 10px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(144,202,249,.18)}
-  .rcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 11px}
-  .rcard .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:5px}
-  .rcard .src{font:700 10px/1 var(--font-sans);letter-spacing:.05em;text-transform:uppercase;color:var(--primary);
-    background:rgba(144,202,249,.12);padding:4px 7px;border-radius:6px}
-  .rcard .twn{font:600 11px/1 var(--font-sans);color:var(--ink-2)}
-  .rcard h4{margin:3px 0 2px;font:600 13.5px/1.3 var(--font-sans);overflow-wrap:anywhere}
-  .rcard .addr{font-size:11.5px;color:var(--ink-3);margin:0 0 6px;overflow-wrap:anywhere}
-  .rcard .pr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-  .rcard .pr .p{font:700 14.5px/1.1 var(--font-sans);color:var(--ok)}
-  .rcard .pr .p.tbd{color:var(--tbd);font-size:12.5px}
-  .rcard .pr .b{font-size:11px;color:var(--ink-3)}
-  .rcard .actions{display:flex;gap:6px}
-  .rcard .actions button,.rcard .actions a{flex:1;font:600 11.5px/1.15 var(--font-sans);padding:8px 8px;border-radius:8px;
-    cursor:pointer;text-decoration:none;text-align:center;border:1px solid var(--line);background:transparent;color:var(--ink-2);transition:.12s}
-  .rcard .actions .approve{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-line)}
-  .rcard .actions .approve:hover{background:rgba(100,181,246,.22)}
-  .rcard .actions .reject{color:var(--ink-3)}
-  .rcard .actions .reject:hover{background:rgba(255,255,255,.06)}
-  .rcard .actions .view{color:var(--primary);border-color:rgba(144,202,249,.4)}
-  .rcard .actions .view:hover{background:rgba(144,202,249,.12)}
-  .review .empty{padding:14px 12px;text-align:center;font-size:12px;color:var(--ink-3)}
+  .note button{flex:0 0 auto;margin-left:auto;border:0;background:transparent;color:var(--ink-3);cursor:pointer;
+    font-size:18px;line-height:1;min-width:var(--tap);min-height:var(--tap);border-radius:10px;
+    display:grid;place-items:center}
+  .note button:hover{background:rgba(255,255,255,.06);color:var(--ink-2)}
 
   /* ---------- list ---------- */
   .list{padding:14px 16px 0;display:flex;flex-direction:column;gap:12px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);
     padding:14px 14px 12px;position:relative;overflow:hidden}
-  .source-card{border-color:rgba(144,202,249,.24);background:linear-gradient(180deg,rgba(144,202,249,.08),var(--card))}
   .card.is-ok{border-color:var(--ok-line)}
   .card.is-ok::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ok)}
   .card.is-passed{opacity:.62}
@@ -136,28 +124,32 @@
     border-radius:8px;padding:5px 8px;line-height:1.2;display:inline-flex;gap:5px;align-items:center;overflow-wrap:anywhere}
   .chip .k{color:var(--ink-3)}
   .why{font-size:12px;color:var(--ink-2);line-height:1.45;background:var(--line-2);border-radius:9px;padding:8px 10px;margin-bottom:11px;overflow-wrap:anywhere}
-  .c-foot{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+
+  /* ---------- card foot: visit / status / delete — all 48px touch targets ---------- */
+  .c-foot{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
   .visit{flex:1 1 auto;min-width:0;text-align:center;text-decoration:none;border:1px solid var(--primary);color:var(--primary);
-    font:600 13px/1.15 var(--font-sans);padding:10px 12px;border-radius:10px;transition:.15s;background:transparent}
+    font:600 13px/1 var(--font-sans);padding:0 14px;min-height:var(--tap);border-radius:10px;transition:.15s;
+    background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:4px}
   .visit:hover{background:var(--primary);color:#0B0F14}
   .status-wrap{flex:0 1 auto;min-width:0;position:relative;display:inline-flex;align-items:center}
-  .status-wrap::after{content:"▾";position:absolute;right:9px;font-size:10px;color:inherit;pointer-events:none;opacity:.7}
+  .status-wrap::after{content:"▾";position:absolute;right:11px;font-size:11px;color:inherit;pointer-events:none;opacity:.7}
   select.status{-webkit-appearance:none;appearance:none;border:1px solid transparent;border-radius:10px;
-    font:600 12.5px/1.15 var(--font-sans);padding:10px 26px 10px 24px;cursor:pointer;max-width:145px}
-  .status-wrap .dot{position:absolute;left:9px;width:8px;height:8px;border-radius:50%;pointer-events:none}
+    font:600 12.5px/1 var(--font-sans);padding:0 30px 0 26px;min-height:var(--tap);cursor:pointer;max-width:160px}
+  .status-wrap .dot{position:absolute;left:11px;width:8px;height:8px;border-radius:50%;pointer-events:none}
   select.status[data-s="to_contact"]{background:var(--s-to_contact-bg);color:var(--s-to_contact-fg)}
   select.status[data-s="contacted"]{background:var(--s-contacted-bg);color:var(--s-contacted-fg)}
   select.status[data-s="viewing"]{background:var(--s-viewing-bg);color:var(--s-viewing-fg)}
   select.status[data-s="shortlist"]{background:var(--s-shortlist-bg);color:var(--s-shortlist-fg)}
   select.status[data-s="passed"]{background:var(--s-passed-bg);color:var(--s-passed-fg)}
   .delete-btn{flex:0 0 auto;background:transparent;border:1px solid var(--line);color:var(--ink-3);
-    width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:14px}
-  .delete-btn:hover{color:var(--err);border-color:var(--err-line)}
+    width:var(--tap);height:var(--tap);border-radius:10px;cursor:pointer;font-size:15px;
+    display:grid;place-items:center;transition:.12s}
+  .delete-btn:hover{color:var(--err);border-color:var(--err-line);background:rgba(2,136,209,.08)}
 
-  .contact{font-size:11.5px;color:var(--ink-3);margin:9px 0 0;line-height:1.45}
+  .contact{font-size:11.5px;color:var(--ink-3);margin:10px 0 0;line-height:1.45}
   .contact b{color:var(--ink-2);font-weight:600}
 
-  .hint{font-size:11.5px;color:var(--ink-3);text-align:center;padding:8px 16px 0}
+  .hint{font-size:11.5px;color:var(--ink-3);text-align:center;padding:12px 16px 0}
   footer{margin:20px 16px 0;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);line-height:1.55}
   footer b{color:var(--ink-2);font-weight:600}
   button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
@@ -174,13 +166,10 @@
   .fab svg{width:24px;height:24px;display:block}
   .fab.busy svg{animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .fab .pill-badge{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;border-radius:999px;
-    background:var(--over);color:#0B0F14;font:700 11px/1 var(--font-sans);display:grid;place-items:center;padding:0 6px;
-    box-shadow:0 2px 6px rgba(0,0,0,.5)}
-  .fab.has-pending{animation:pulse 2.2s infinite}
+  .fab.fresh{animation:pulse 1.6s ease-out 3}
   @keyframes pulse{
-    0%,100%{box-shadow:0 8px 24px -6px rgba(0,0,0,.75),0 0 0 0 rgba(144,202,249,.55)}
-    50%{box-shadow:0 8px 24px -6px rgba(0,0,0,.75),0 0 0 12px rgba(144,202,249,0)}
+    0%{box-shadow:0 8px 24px -6px rgba(0,0,0,.75),0 0 0 0 rgba(144,202,249,.55)}
+    100%{box-shadow:0 8px 24px -6px rgba(0,0,0,.75),0 0 0 16px rgba(144,202,249,0)}
   }
   .fab-meta{position:absolute;bottom:8px;right:88px;background:var(--card);border:1px solid var(--line);
     border-radius:8px;padding:7px 10px;font:600 11px/1.2 var(--font-sans);color:var(--ink-2);pointer-events:none;
@@ -190,8 +179,8 @@
   /* ---------- toast ---------- */
   .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(8px);
     background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;
-    padding:10px 14px;font:600 12.5px/1.3 var(--font-sans);box-shadow:var(--shadow);
-    z-index:70;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:88%}
+    padding:12px 16px;font:600 12.5px/1.3 var(--font-sans);box-shadow:var(--shadow);
+    z-index:70;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:88%;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.err{border-color:var(--err-line);color:var(--err)}
   .toast.ok{border-color:var(--ok-line)}
@@ -199,11 +188,11 @@
   @media (max-width:380px){
     header{padding-left:14px;padding-right:14px}
     .list{padding-left:14px;padding-right:14px}
-    .budget{gap:8px}
+    .budget{gap:10px}
     .budget .val{min-width:52px;font-size:12.5px}
     .budget .count{display:none}
     .c-foot{flex-wrap:wrap}
-    .status-wrap, select.status{flex:1 1 auto;max-width:none}
+    .status-wrap, select.status{flex:1 1 auto;max-width:none;width:100%}
     .visit{flex:1 1 100%}
     .delete-btn{flex:0 0 auto}
   }
@@ -236,18 +225,9 @@
 
   <div class="note" id="note">
     <span class="ico">!</span>
-    <p><b>Investigation rule.</b> The crawler pulls candidates from REALTOR.ca, Skyline Living, and Apartments.com. New finds drop into the review queue below — approve to add, reject to suppress forever. Shared rooms / shared kitchens / shared baths are filtered out automatically.</p>
+    <p><b>Investigation rule.</b> The crawler pulls self-contained candidates from REALTOR.ca, Skyline Living, and Apartments.com. New matches are added automatically with a NEW badge for 7 days. Removing a listing also suppresses it from future crawls. Shared rooms / shared kitchens / shared baths are filtered out automatically.</p>
     <button id="noteX" aria-label="Dismiss">×</button>
   </div>
-
-  <section class="review" id="review">
-    <div class="review-head" id="reviewHead">
-      <h3>Pending review</h3>
-      <span class="ct tnum" id="reviewCount">0</span>
-      <span class="caret">▾</span>
-    </div>
-    <div class="review-body" id="reviewBody"></div>
-  </section>
 
   <div id="view"></div>
 
@@ -261,7 +241,6 @@
         <path d="M21 12a9 9 0 1 1-3.18-6.86"/>
         <path d="M21 4v5h-5"/>
       </svg>
-      <span class="pill-badge tnum" id="fabBadge" style="display:none">0</span>
     </button>
     <div class="fab-meta" id="fabMeta">Tap to crawl</div>
   </div>
@@ -275,19 +254,17 @@
    - Approved listings live in localStorage (seeded on first load from SEED).
    - The /api/crawl endpoint returns fresh candidates from REALTOR.ca,
      Skyline Living, and Apartments.com.
-   - New candidates that are not already approved or rejected land in the
-     review queue. The user manually approves or rejects each.
-   - Approved listings show a NEW badge for 7 days from the approval date.
+   - New candidates are auto-added to the board (no review queue).
+   - Removing a listing also stores it in `rejected` so it doesn't reappear.
+   - NEW badge shows for 7 days after a listing was added.
    ========================================================================= */
 
 const STORE = {
   approved: "halton_approved_v2",
   statuses: "halton_statuses_v2",
-  pending:  "halton_pending_v2",
   rejected: "halton_rejected_v2",
   lastCrawl:"halton_last_crawl_v2",
-  noteHidden:"halton_note_hidden_v2",
-  reviewCollapsed:"halton_review_collapsed_v2"
+  noteHidden:"halton_note_hidden_v2"
 };
 
 /* Seed: the 5 verified manual entries from the original board. */
@@ -346,29 +323,24 @@ const STATUSES = [
 ];
 const BUDGET_CAP = 1350;
 const NEW_BADGE_DAYS = 7;
-const STALE_MS = 5 * 60 * 1000;  // auto-crawl on load if last crawl is older than 5 min
+const STALE_MS = 5 * 60 * 1000;
 
-/* ---------- storage helpers ---------- */
+/* ---------- storage ---------- */
 function load(key, fallback){
   try{ const v = localStorage.getItem(key); return v==null ? fallback : JSON.parse(v); }
   catch(e){ return fallback; }
 }
-function save(key, val){
-  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
-}
+function save(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
 
 let state = {
   maxRent: 1350,
   approved: load(STORE.approved, null) || SEED.slice(),
   statuses: load(STORE.statuses, {}),
-  pending:  load(STORE.pending, []),
   rejected: load(STORE.rejected, []),
   lastCrawl:load(STORE.lastCrawl, null),
   crawling: false,
-  noteHidden: load(STORE.noteHidden, false),
-  reviewCollapsed: load(STORE.reviewCollapsed, false)
+  noteHidden: load(STORE.noteHidden, false)
 };
-// First-load persistence
 save(STORE.approved, state.approved);
 
 /* ---------- helpers ---------- */
@@ -381,9 +353,8 @@ function visibleListings(){
 }
 function isNew(l){
   if(!l.dateAdded) return false;
-  const added = new Date(l.dateAdded).getTime();
-  if(!isFinite(added)) return false;
-  return (Date.now() - added) < NEW_BADGE_DAYS*86400*1000;
+  const t = new Date(l.dateAdded).getTime();
+  return isFinite(t) && (Date.now() - t) < NEW_BADGE_DAYS*86400*1000;
 }
 function relTime(iso){
   if(!iso) return "never";
@@ -394,8 +365,7 @@ function relTime(iso){
   if(min<60) return min+"m ago";
   const hr = Math.floor(min/60);
   if(hr<24) return hr+"h ago";
-  const d = Math.floor(hr/24);
-  return d+"d ago";
+  return Math.floor(hr/24)+"d ago";
 }
 function keyOf(c){ return c.externalId || c.url || (c.title+"|"+c.town); }
 
@@ -430,7 +400,7 @@ function cardHTML(l){
       <span class="status-wrap"><span class="dot" style="background:var(--s-${getStatus(l.id)}-dot)"></span>
         <select class="status" data-id="${esc(l.id)}" data-s="${getStatus(l.id)}" aria-label="Status">${opts}</select>
       </span>
-      <button class="delete-btn" data-del="${esc(l.id)}" title="Remove from board">✕</button>
+      <button class="delete-btn" data-del="${esc(l.id)}" aria-label="Remove from board">✕</button>
     </div>
     ${l.contact?`<p class="contact"><b>Contact:</b> ${esc(l.contact)}</p>`:""}
   </article>`;
@@ -439,64 +409,18 @@ function cardHTML(l){
 function renderList(){
   const arr=visibleListings();
   return `<div class="list">${arr.map(cardHTML).join("")}</div>
-    <p class="hint">${arr.length} of ${state.approved.length} approved listings shown · ${state.pending.length} pending</p>`;
-}
-
-/* ---------- review queue render ---------- */
-function reviewCardHTML(c){
-  const priceBlock = c.rent==null
-    ? `<span class="p tbd">Price unknown</span>`
-    : `<span class="p tnum">${money(c.rent)}</span>${c.beds?`<span class="b">· ${esc(c.beds)} bed</span>`:""}`;
-  return `
-  <div class="rcard" data-pkey="${esc(keyOf(c))}">
-    <div class="meta">
-      <span class="src">${esc(c.source||"crawler")}</span>
-      <span class="twn">${esc(c.town)}</span>
-    </div>
-    <h4>${esc(c.title || c.type || "Listing")}</h4>
-    ${c.address?`<p class="addr">${esc(c.address)}</p>`:""}
-    <div class="pr">${priceBlock}</div>
-    <div class="actions">
-      <a class="view" href="${esc(c.url)}" target="_blank" rel="noopener">View ↗</a>
-      <button class="approve" data-act="approve">Approve</button>
-      <button class="reject"  data-act="reject">Reject</button>
-    </div>
-  </div>`;
-}
-function renderReview(){
-  const wrap=document.getElementById("review");
-  const body=document.getElementById("reviewBody");
-  const ct=document.getElementById("reviewCount");
-  ct.textContent = state.pending.length;
-  wrap.classList.toggle("collapsed", state.reviewCollapsed);
-  if(state.pending.length === 0){
-    body.innerHTML = `<div class="empty">No new candidates. Tap the refresh button to crawl.</div>`;
-  } else {
-    body.innerHTML = state.pending.map(reviewCardHTML).join("");
-  }
+    <p class="hint">${arr.length} of ${state.approved.length} listings shown · max ${money(state.maxRent)}</p>`;
 }
 
 /* ---------- main render ---------- */
 function render(){
   document.getElementById("view").innerHTML = renderList();
-  renderReview();
   const slider=document.getElementById("budget");
   const pct=((slider.value-slider.min)/(slider.max-slider.min))*100;
   slider.style.setProperty("--fill", pct+"%");
   document.getElementById("budgetVal").textContent=money(+slider.value);
   document.getElementById("budgetCount").textContent=`${visibleListings().length} of ${state.approved.length}`;
   document.getElementById("lastCrawl").textContent = "Updated " + relTime(state.lastCrawl);
-  // FAB pending badge
-  const fab=document.getElementById("fab");
-  const badge=document.getElementById("fabBadge");
-  if(state.pending.length>0){
-    fab.classList.add("has-pending");
-    badge.style.display="grid";
-    badge.textContent = state.pending.length;
-  } else {
-    fab.classList.remove("has-pending");
-    badge.style.display="none";
-  }
   document.getElementById("fabMeta").textContent =
     state.crawling ? "Crawling sources…" : `Last crawl: ${relTime(state.lastCrawl)}`;
 }
@@ -508,15 +432,39 @@ function toast(msg, kind){
   el.className = "toast show" + (kind?(" "+kind):"");
   el.textContent = msg;
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>{ el.className="toast"; }, 4200);
+  toastTimer=setTimeout(()=>{ el.className="toast"; }, 4400);
 }
 
-/* ---------- crawl ---------- */
-async function crawl(manual){
+/* ---------- listing helpers ---------- */
+function makeListing(c){
+  const id = "crawled-" + (c.externalId || (c.url||"").slice(-40) || Date.now())
+    .replace(/[^a-z0-9\-]/gi,"-").slice(0,80) + "-" + Math.random().toString(36).slice(2,6);
+  return {
+    id,
+    town: c.town,
+    type: c.title || "Listing · self-contained",
+    area: c.address || c.town,
+    rent: c.rent ?? null,
+    beds: c.beds || "Confirm",
+    baths: c.baths || "Confirm",
+    available: "Confirm",
+    included: "",
+    platform: c.source,
+    url: c.url,
+    externalId: c.externalId || c.url,
+    contact: "Contact via source",
+    dateAdded: new Date().toISOString().slice(0,10),
+    why: "Auto-discovered by crawler — verify the listing page before contact."
+  };
+}
+
+/* ---------- crawl (auto-approve) ---------- */
+async function crawl(){
   if(state.crawling) return;
   state.crawling = true;
   const fab=document.getElementById("fab");
   fab.classList.add("busy");
+  fab.classList.remove("fresh");
   fab.disabled = true;
   document.getElementById("crawlStatus").className="crawl-status busy";
   document.getElementById("crawlMsg").textContent = "Crawling REALTOR.ca · Skyline · Apartments.com…";
@@ -528,21 +476,21 @@ async function crawl(manual){
     const data = await res.json();
     if(!data.ok) throw new Error(data.error || "crawl failed");
 
-    // dedup against approved + rejected + already pending
-    const approvedKeys = new Set(state.approved.map(a => a.url));
+    const approvedUrls = new Set(state.approved.map(a => a.url));
     const approvedExt  = new Set(state.approved.map(a => a.externalId || a.url));
     const rejectedSet  = new Set(state.rejected);
-    const pendingSet   = new Set(state.pending.map(keyOf));
 
     const fresh = [];
     for(const c of (data.listings || [])){
       const k = keyOf(c);
-      if(approvedKeys.has(c.url) || approvedExt.has(c.externalId) || rejectedSet.has(k) || pendingSet.has(k)) continue;
-      fresh.push(c);
+      if(approvedUrls.has(c.url) || approvedExt.has(c.externalId) || rejectedSet.has(k)) continue;
+      fresh.push(makeListing(c));
     }
-    state.pending = state.pending.concat(fresh);
+    if(fresh.length){
+      state.approved = state.approved.concat(fresh);
+      save(STORE.approved, state.approved);
+    }
     state.lastCrawl = new Date().toISOString();
-    save(STORE.pending, state.pending);
     save(STORE.lastCrawl, state.lastCrawl);
 
     const stats = data.stats || {};
@@ -561,11 +509,10 @@ async function crawl(manual){
     document.getElementById("crawlMsg").textContent = sourceBits + (errBits.length ? " · " + errBits.join(", ") : "");
 
     if(fresh.length === 0){
-      toast(`No new candidates · ${sourceBits || "0 results"}`, "ok");
+      toast(`No new places · ${sourceBits || "0 results"}`, "ok");
     } else {
-      toast(`${fresh.length} new candidate${fresh.length===1?"":"s"} found → review queue`, "ok");
-      state.reviewCollapsed = false;
-      save(STORE.reviewCollapsed, false);
+      toast(`Added ${fresh.length} new ${fresh.length===1?"listing":"listings"} to the board`, "ok");
+      fab.classList.add("fresh");
     }
   } catch (e) {
     toast("Failed to find new places. We'll redo searching it shortly.", "err");
@@ -579,40 +526,6 @@ async function crawl(manual){
   }
 }
 
-/* ---------- approve / reject ---------- */
-function approveCandidate(c){
-  const id = "crawled-" + (c.externalId || (c.url||"").slice(-40) || Date.now()).replace(/[^a-z0-9\-]/gi,"-").slice(0,80);
-  const listing = {
-    id,
-    town: c.town,
-    type: c.title || "Listing · self-contained",
-    area: c.address || c.town,
-    rent: c.rent ?? null,
-    beds: c.beds || "Confirm",
-    baths: c.baths || "Confirm",
-    available: "Confirm",
-    included: "",
-    platform: c.source,
-    url: c.url,
-    externalId: c.externalId || c.url,
-    contact: "Contact via source",
-    dateAdded: new Date().toISOString().slice(0,10),
-    why: "Auto-discovered by crawler — verify the listing page before contact."
-  };
-  state.approved.push(listing);
-  save(STORE.approved, state.approved);
-}
-function rejectCandidate(c){
-  const k = keyOf(c);
-  if(!state.rejected.includes(k)) state.rejected.push(k);
-  save(STORE.rejected, state.rejected);
-}
-function removePending(c){
-  const k = keyOf(c);
-  state.pending = state.pending.filter(x => keyOf(x) !== k);
-  save(STORE.pending, state.pending);
-}
-
 /* ---------- events ---------- */
 document.getElementById("budget").addEventListener("input",e=>{ state.maxRent=+e.target.value; render(); });
 
@@ -624,32 +537,17 @@ document.getElementById("view").addEventListener("change",e=>{
 });
 document.getElementById("view").addEventListener("click",e=>{
   const del=e.target.closest("button[data-del]"); if(!del)return;
-  if(!confirm("Remove this listing from your board?")) return;
-  state.approved = state.approved.filter(a => a.id !== del.dataset.del);
-  save(STORE.approved, state.approved);
-  render();
-});
-
-document.getElementById("reviewHead").addEventListener("click",()=>{
-  state.reviewCollapsed = !state.reviewCollapsed;
-  save(STORE.reviewCollapsed, state.reviewCollapsed);
-  render();
-});
-document.getElementById("reviewBody").addEventListener("click",e=>{
-  const btn=e.target.closest("button[data-act]"); if(!btn)return;
-  const card=btn.closest(".rcard"); if(!card)return;
-  const key=card.dataset.pkey;
-  const c=state.pending.find(x => keyOf(x) === key);
-  if(!c) return;
-  if(btn.dataset.act === "approve"){
-    approveCandidate(c);
-    removePending(c);
-    toast("Added to board · NEW badge will fade after 7 days", "ok");
-  } else if(btn.dataset.act === "reject"){
-    rejectCandidate(c);
-    removePending(c);
-    toast("Rejected — won't reappear in future crawls", "");
+  const id = del.dataset.del;
+  const listing = state.approved.find(a => a.id === id);
+  if(!confirm("Remove this listing? It will also be suppressed from future crawls.")) return;
+  // Add to rejected so the crawler won't bring it back.
+  if(listing){
+    const k = listing.externalId || listing.url;
+    if(k && !state.rejected.includes(k)) state.rejected.push(k);
+    save(STORE.rejected, state.rejected);
   }
+  state.approved = state.approved.filter(a => a.id !== id);
+  save(STORE.approved, state.approved);
   render();
 });
 
@@ -659,21 +557,23 @@ document.getElementById("noteX").addEventListener("click",()=>{
 });
 if(state.noteHidden){ document.getElementById("note").style.display="none"; }
 
-document.getElementById("fab").addEventListener("click",()=>crawl(true));
+document.getElementById("fab").addEventListener("click",()=>crawl());
 
 document.getElementById("foot").innerHTML =
-  `<b>Rental Board — Live edition.</b> Crawler runs on demand from the floating refresh button, ` +
-  `pulling self-contained candidates from REALTOR.ca, Skyline Living, and Apartments.com. ` +
-  `Approved listings sync to your browser's local storage so they persist between visits. ` +
-  `Rejected candidates are remembered and won't re-appear. Always verify the listing detail page before contacting a landlord, ` +
+  `<b>Rental Board — Live edition.</b> Tap the floating refresh button to crawl REALTOR.ca, Skyline Living, ` +
+  `and Apartments.com for fresh self-contained candidates. New matches drop straight onto the board with a NEW badge for 7 days. ` +
+  `Removing a listing also stops it from re-appearing in future crawls. Your board state lives in this browser's local storage, ` +
+  `so it persists between visits. Always verify the listing detail page before contacting a landlord, ` +
   `and never send a deposit before viewing in person or by video. Source code: <b>github.com/imseon-k/rental-board</b>.`;
 
 /* ---------- init: auto-crawl if stale ---------- */
 (function init(){
+  // Clean up any leftover pending data from earlier versions.
+  try{ localStorage.removeItem("halton_pending_v2"); localStorage.removeItem("halton_review_collapsed_v2"); }catch(e){}
   render();
   const last = state.lastCrawl ? new Date(state.lastCrawl).getTime() : 0;
   if(Date.now() - last > STALE_MS){
-    setTimeout(()=>crawl(false), 350);
+    setTimeout(()=>crawl(), 350);
   }
 })();
 </script>
