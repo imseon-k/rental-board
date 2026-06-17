@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Rental Board · Live</title>
 <meta name="description" content="Live rental investigation board for Fergus, Acton, Milton, Oakville, and Burlington. Auto-crawled from REALTOR.ca, Skyline Living, and Apartments.com." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --font-sans:"Product Sans","Google Sans","Roboto","Arial",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -99,12 +102,12 @@
   .chip .k{color:var(--ink-3);font-weight:700}
   .why{font-size:12px;color:var(--ink-2);line-height:1.45;background:#19212B;border-radius:14px;padding:10px 11px;margin-bottom:12px;overflow-wrap:anywhere}
 
-  .c-foot{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
-  .visit{flex:1 1 auto;min-width:0;text-align:center;text-decoration:none;border:0;color:#0B0F14;font:800 13px/1 var(--font-sans);padding:0 14px;min-height:var(--tap);border-radius:14px;background:var(--primary);display:inline-flex;align-items:center;justify-content:center;gap:4px}
+  .c-foot{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+  .visit{width:100%;min-width:0;text-align:center;text-decoration:none;border:0;color:#0B0F14;font:800 13px/1 var(--font-sans);padding:0 14px;min-height:var(--tap);border-radius:14px;background:var(--primary);display:inline-flex;align-items:center;justify-content:center;gap:4px}
   .visit:hover{background:var(--primary-strong);color:#0B0F14}
-  .status-wrap{flex:0 1 auto;min-width:0;position:relative;display:inline-flex;align-items:center}
+  .status-wrap{width:100%;min-width:0;position:relative;display:inline-flex;align-items:center}
   .status-wrap::after{content:"▾";position:absolute;right:12px;font-size:11px;color:inherit;pointer-events:none;opacity:.8}
-  select.status{-webkit-appearance:none;appearance:none;border:0;border-radius:14px;font:800 12.5px/1 var(--font-sans);padding:0 31px 0 28px;min-height:var(--tap);cursor:pointer;max-width:164px}
+  select.status{-webkit-appearance:none;appearance:none;border:0;border-radius:14px;font:800 12.5px/1 var(--font-sans);padding:0 31px 0 28px;min-height:var(--tap);cursor:pointer;width:100%;max-width:none}
   .status-wrap .dot{position:absolute;left:12px;width:8px;height:8px;border-radius:50%;pointer-events:none}
   select.status[data-s="to_contact"]{background:var(--s-to_contact-bg);color:var(--s-to_contact-fg)}
   select.status[data-s="contacted"]{background:var(--s-contacted-bg);color:var(--s-contacted-fg)}
@@ -134,7 +137,7 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.err{color:var(--err)}
   .toast.ok{color:var(--ink)}
-  @media (max-width:380px){header{padding-left:14px;padding-right:14px}.list{padding-left:14px;padding-right:14px}.budget{gap:10px}.budget .val{min-width:52px;font-size:12.5px}.budget .count{display:none}.c-foot{flex-wrap:wrap}.status-wrap,select.status{flex:1 1 auto;max-width:none;width:100%}.visit{flex:1 1 100%}}
+  @media (max-width:380px){header{padding-left:14px;padding-right:14px}.list{padding-left:14px;padding-right:14px}.budget{gap:10px}.budget .val{min-width:52px;font-size:12.5px}.budget .count{display:none}}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
