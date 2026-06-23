@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Rental Board · Live</title>
-<meta name="description" content="Live rental investigation board for Fergus, Acton, Milton, Oakville, and Burlington. Auto-crawled from REALTOR.ca, Skyline Living, and Apartments.com." />
+<meta name="description" content="Live rental investigation board for Burlington, Oakville, Milton, Halton Hills, Georgetown, Fergus, and Acton. Auto-crawled from Rentals.ca, REALTOR.ca, Zolo, Kijiji, Apartments.com, RentCafe, Viewit, RentBoard, and Skyline Living." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -145,13 +145,13 @@
 <div class="app">
   <header>
     <div class="brand"><h1>Rental Board<span class="live">Live</span></h1><span class="meta tnum" id="lastCrawl">Loading…</span></div>
-    <p class="sub">Live investigation board — <b>auto-crawled</b> from REALTOR.ca, Skyline Living, and Apartments.com. Self-contained units only · target <b>≤&nbsp;$1,350</b> · Halton + Fergus / Acton.</p>
+    <p class="sub">Live investigation board — <b>auto-crawled</b> from 9 sources including Rentals.ca, REALTOR.ca, Zolo, Kijiji, Apartments.com, and RentCafe. Self-contained units only · target <b>≤&nbsp;$1,350</b> · Burlington / Oakville / Milton / Halton Hills / Georgetown / Fergus / Acton.</p>
     <div class="controls">
       <div class="ctl-row"><span class="label">Max</span><div class="budget" style="flex:1"><input type="range" id="budget" min="1100" max="2000" step="25" value="1350" aria-label="Maximum rent" /><span class="val tnum" id="budgetVal">$1,350</span><span class="count tnum" id="budgetCount"></span></div></div>
       <div class="crawl-status" id="crawlStatus"><span class="dot"></span><span id="crawlMsg">Ready</span></div>
     </div>
   </header>
-  <div class="note" id="note"><span class="ico">!</span><p><b>Investigation rule.</b> The crawler pulls self-contained candidates from REALTOR.ca, Skyline Living, and Apartments.com. New matches are added automatically with a NEW badge for 7 days. Choosing Passed removes a listing and suppresses it from future crawls. Shared rooms / shared kitchens / shared baths are filtered out automatically.</p><button id="noteX" aria-label="Dismiss">×</button></div>
+  <div class="note" id="note"><span class="ico">!</span><p><b>Investigation rule.</b> The crawler pulls self-contained candidates from 9 sources: Rentals.ca, REALTOR.ca, Zolo, Kijiji, Apartments.com, RentCafe, Viewit.ca, RentBoard, and Skyline Living. New matches are added automatically with a NEW badge for 7 days. Choosing Passed removes a listing and suppresses it from future crawls. Shared rooms / shared kitchens / shared baths are filtered out automatically. Facebook Marketplace requires login and isn't crawled — add those manually.</p><button id="noteX" aria-label="Dismiss">×</button></div>
   <div id="view"></div>
   <footer id="foot"></footer>
 </div>
@@ -258,7 +258,7 @@ async function crawl(){
   const fab=document.getElementById("fab");
   fab.classList.add("busy"); fab.classList.remove("fresh"); fab.disabled = true;
   document.getElementById("crawlStatus").className="crawl-status busy";
-  document.getElementById("crawlMsg").textContent = "Crawling REALTOR.ca · Skyline · Apartments.com…";
+  document.getElementById("crawlMsg").textContent = "Crawling 9 sources…";
   render();
   try {
     const res = await fetch("/api/crawl", { cache:"no-store" });
@@ -276,13 +276,28 @@ async function crawl(){
     }
     if(fresh.length){ state.approved = state.approved.concat(fresh); save(STORE.approved, state.approved); }
     state.lastCrawl = new Date().toISOString(); save(STORE.lastCrawl, state.lastCrawl);
+
     const stats = data.stats || {};
-    const sourceBits = [stats.skyline != null ? `Skyline ${stats.skyline}` : null, stats.realtor != null ? `Realtor ${stats.realtor}` : null, stats.apartments != null ? `Apartments ${stats.apartments}` : null].filter(Boolean).join(" · ");
+    const errors = data.errors || {};
+    const okBits = [];
     const errBits = [];
-    if(stats.errors){ if(stats.errors.skyline) errBits.push("Skyline failed"); if(stats.errors.realtor) errBits.push("Realtor blocked"); if(stats.errors.apartments) errBits.push("Apartments blocked"); }
-    document.getElementById("crawlStatus").className = errBits.length ? "crawl-status error" : "crawl-status";
-    document.getElementById("crawlMsg").textContent = sourceBits + (errBits.length ? " · " + errBits.join(", ") : "");
-    if(fresh.length === 0) toast(`No new places · ${sourceBits || "0 results"}`, "ok"); else { toast(`Added ${fresh.length} new ${fresh.length===1?"listing":"listings"} to the board`, "ok"); fab.classList.add("fresh"); }
+    let totalFound = 0;
+    for(const key of Object.keys(stats)){
+      const s = stats[key];
+      if(errors[key]){
+        errBits.push(`${s.label} blocked`);
+      } else if(s.count > 0){
+        okBits.push(`${s.label} ${s.count}`);
+        totalFound += s.count;
+      }
+    }
+    const hadError = errBits.length > 0;
+    document.getElementById("crawlStatus").className = hadError ? "crawl-status error" : "crawl-status";
+    const summary = `${totalFound} from ${Object.keys(stats).length} sources` + (okBits.length ? ` · ${okBits.slice(0,3).join(" · ")}${okBits.length>3?` +${okBits.length-3} more`:""}` : "") + (hadError ? ` · ${errBits.length} blocked` : "");
+    document.getElementById("crawlMsg").textContent = summary;
+
+    if(fresh.length === 0) toast(`No new places · ${totalFound} total from ${Object.keys(stats).length} sources`, "ok");
+    else { toast(`Added ${fresh.length} new ${fresh.length===1?"listing":"listings"} to the board`, "ok"); fab.classList.add("fresh"); }
   } catch (e) {
     toast("Failed to find new places. We'll redo searching it shortly.", "err");
     document.getElementById("crawlStatus").className="crawl-status error";
@@ -310,11 +325,13 @@ document.getElementById("noteX").addEventListener("click",()=>{ document.getElem
 if(state.noteHidden){ document.getElementById("note").style.display="none"; }
 document.getElementById("fab").addEventListener("click",()=>crawl());
 document.getElementById("foot").innerHTML =
-  `<b>Rental Board — Live edition.</b> Tap the floating refresh button to crawl REALTOR.ca, Skyline Living, ` +
-  `and Apartments.com for fresh self-contained candidates. New matches drop straight onto the board with a NEW badge for 7 days. ` +
-  `Choosing <b>Passed</b> removes a listing and stops it from re-appearing in future crawls. Your board state lives in this browser's local storage, ` +
-  `so it persists between visits. Always verify the listing detail page before contacting a landlord, ` +
-  `and never send a deposit before viewing in person or by video. Source code: <b>github.com/imseon-k/rental-board</b>.`;
+  `<b>Rental Board — Live edition.</b> Tap the floating refresh button to crawl 9 sources: ` +
+  `Rentals.ca, REALTOR.ca, Zolo, Kijiji, Apartments.com, RentCafe, Viewit.ca, RentBoard, and Skyline Living. ` +
+  `New matches drop straight onto the board with a NEW badge for 7 days. ` +
+  `Choosing <b>Passed</b> removes a listing and stops it from re-appearing in future crawls. ` +
+  `Facebook Marketplace requires login and isn't crawled — add those manually if you find them. ` +
+  `Always verify the listing detail page before contacting a landlord, and never send a deposit before viewing in person or by video. ` +
+  `Source: <b>github.com/imseon-k/rental-board</b>.`;
 (function init(){
   try{ localStorage.removeItem("halton_pending_v2"); localStorage.removeItem("halton_review_collapsed_v2"); }catch(e){}
   render();
