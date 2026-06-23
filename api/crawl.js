@@ -585,8 +585,11 @@ module.exports = async (req, res) => {
     }
   });
 
-  // Final town gate (defense in depth)
-  listings = listings.filter((l) => townMatches(l.town) || townMatches(l.address));
+    // Final town gate (defense in depth) — trust the actual address / URL / title,
+  // NOT the source-provided town label (some sources mis-route by location ID).
+  listings = listings.filter((l) =>
+    townMatches(l.address) || townMatches(l.url) || townMatches(l.title)
+  );
 
   // Dedup by externalId or URL
   const seen = new Set();
