@@ -383,45 +383,63 @@ async function crawlZolo() {
 }
 
 // ---------------------------------------------------------------------------
-// Source 6: Kijiji — SSR listing tiles
+// Source 6: Kijiji — keyword search (Kijiji 2024+ moved away from location IDs;
+// the canonical pattern is now /b-apartments-condos/canada/{query}/k0c37l0).
+// We loose-walk listing anchors and use the actual container text as address
+// so the final strict town gate decides what survives.
 // ---------------------------------------------------------------------------
 async function crawlKijiji() {
-  // Kijiji uses numeric "Location IDs" — these IDs are stable per municipality.
   const cityPages = [
-    { town: "Burlington",   locId: "1700169" },
-    { town: "Oakville",     locId: "1700183" },
-    { town: "Milton",       locId: "1700181" },
-    { town: "Halton Hills", locId: "1700175" },
-    { town: "Georgetown",   locId: "1700175" }, // Georgetown rolls into Halton Hills on Kijiji
+    { town: "Burlington",   q: "burlington" },
+    { town: "Oakville",     q: "oakville" },
+    { town: "Milton",       q: "milton" },
+    { town: "Halton Hills", q: "halton+hills" },
+    { town: "Georgetown",   q: "georgetown" },
+    { town: "Fergus",       q: "fergus" },
+    { town: "Acton",        q: "acton" },
   ];
 
   const results = [];
-  await Promise.allSettled(cityPages.map(async ({ town, locId }) => {
+  await Promise.allSettled(cityPages.map(async ({ town, q }) => {
     try {
-      const url = `https://www.kijiji.ca/b-apartments-condos/${town.toLowerCase().replace(/ /g, "-")}/c37l${locId}?ad=offering&price=__${MAX_RENT}`;
+      const url = `https://www.kijiji.ca/b-apartments-condos/canada/${q}/k0c37l0?ad=offering&price=0__${MAX_RENT}`;
       const html = await fetchHTML(url);
       const $ = cheerio.load(html);
-      // Selectors that have been stable: [data-testid="listing-card"], article[data-listing-id], li.search-item
-      $('[data-testid="listing-card"], li.search-item, article[data-listing-id], section[data-testid="listing-card"]').each((_, el) => {
-        const $el = $(el);
-        const link = $el.find('a[href*="/v-apartments-condos/"], a[href*="/v-room-rental"]').first().attr("href");
-        if (!link) return;
-        const title = $el.find('[data-testid="listing-title"], h3, .title').first().text().trim();
-        const desc = ($el.find('[data-testid="listing-description"], .description').first().text().trim() + " " + title);
-        if (classifyShared(desc)) return;
-        const priceText = $el.find('[data-testid="listing-price"], .price, .ad-price').first().text();
-        const rent = parseRent(priceText);
+
+      const seenLinks = new Set();
+      $('a[href*="/v-apartments-condos/"]').each((_, el) => {
+        const $a = $(el);
+        const link = $a.attr("href");
+        if (!link || seenLinks.has(link)) return;
+        seenLinks.add(link);
+
+        // Find the listing container (walk up to a reasonable card-like ancestor).
+        const $container = $a.closest('section, article, li, div[class*="listing"], div[class*="item"], div[class*="card"]');
+        const containerText = ($container.length ? $container.text() : $a.parent().text()).replace(/\s+/g, " ").trim();
+        if (!containerText) return;
+
+        // Real address-bearing town match (NOT our search keyword — defense in depth).
+        const matchedTown = townMatches(containerText);
+        if (!matchedTown) return;
+
+        if (classifyShared(containerText)) return;
+
+        const priceMatch = containerText.match(/\$\s?([0-9],?[0-9]{3})/);
+        const rent = parseRent(priceMatch ? priceMatch[0] : null);
         if (!rent || rent > MAX_RENT) return;
-        const address = $el.find('[data-testid="listing-location"], .location').first().text().trim() || town;
+
+        const title = ($a.attr("title") || $a.text() || "").trim() || "Kijiji listing";
+        const fullUrl = link.startsWith("http") ? link : `https://www.kijiji.ca${link}`;
+
         results.push({
           source: "Kijiji",
-          town,
-          url: link.startsWith("http") ? link : `https://www.kijiji.ca${link}`,
-          title: title || "Kijiji listing",
-          address,
+          town: matchedTown,
+          url: fullUrl,
+          title,
+          address: containerText.slice(0, 240),
           rent,
           beds: "Confirm",
-          externalId: `kijiji:${link.split("?")[0]}`,
+          externalId: `kijiji:${fullUrl.split("?")[0]}`,
         });
       });
     } catch (e) {}
@@ -585,7 +603,7 @@ module.exports = async (req, res) => {
     }
   });
 
-    // Final town gate (defense in depth) — trust the actual address / URL / title,
+  // Final town gate (defense in depth) — trust the actual address / URL / title,
   // NOT the source-provided town label (some sources mis-route by location ID).
   listings = listings.filter((l) =>
     townMatches(l.address) || townMatches(l.url) || townMatches(l.title)
