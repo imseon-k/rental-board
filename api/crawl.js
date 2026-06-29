@@ -1,7 +1,7 @@
 // Vercel Serverless Function: /api/crawl
 // Crawls multiple Canadian rental sources for self-contained listings in the
-// Halton + Centre Wellington area under the target rent cap. Returns a
-// normalized listings array + per-source stats.
+// Halton + Centre Wellington + Hamilton area under the target rent cap.
+// Returns a normalized listings array + per-source stats.
 //
 // Each source is wrapped in try/catch and has a per-fetch timeout so one
 // failing or slow source never breaks the response. Frontend dedupes by URL /
@@ -27,7 +27,7 @@ const cheerio = require("cheerio");
 const MAX_RENT = 1350;
 const ALLOWED_TOWNS = [
   "Fergus", "Acton", "Milton", "Oakville", "Burlington",
-  "Halton Hills", "Georgetown",
+  "Halton Hills", "Georgetown", "Hamilton",
 ];
 
 const UA =
@@ -92,7 +92,7 @@ function townMatches(value) {
 // ---------------------------------------------------------------------------
 async function crawlSkyline() {
   const cityPages = [
-    "fergus", "acton", "milton", "oakville", "burlington",
+    "fergus", "acton", "milton", "oakville", "burlington", "hamilton",
   ].map((c) => ({
     town: c.charAt(0).toUpperCase() + c.slice(1),
     url: `https://www.skylineliving.ca/en/apartments/ontario/${c}`,
@@ -172,6 +172,7 @@ async function crawlRealtor() {
     { town: "Halton Hills", LongitudeMin: -80.10, LatitudeMin: 43.55, LongitudeMax: -79.90, LatitudeMax: 43.75 },
     { town: "Fergus",       LongitudeMin: -80.48, LatitudeMin: 43.66, LongitudeMax: -80.28, LatitudeMax: 43.77 },
     { town: "Acton",        LongitudeMin: -80.10, LatitudeMin: 43.58, LongitudeMax: -79.95, LatitudeMax: 43.70 },
+    { town: "Hamilton",     LongitudeMin: -80.05, LatitudeMin: 43.15, LongitudeMax: -79.72, LatitudeMax: 43.35 },
   ];
 
   const results = [];
@@ -246,6 +247,7 @@ async function crawlApartments() {
     { town: "Burlington", url: "https://www.apartments.com/burlington-on/max-1350/" },
     { town: "Oakville",   url: "https://www.apartments.com/oakville-on/max-1350/" },
     { town: "Milton",     url: "https://www.apartments.com/milton-on/max-1350/" },
+    { town: "Hamilton",   url: "https://www.apartments.com/hamilton-on/max-1350/" },
   ];
 
   const results = [];
@@ -296,6 +298,7 @@ async function crawlRentalsCa() {
     { town: "Georgetown",   slug: "georgetown-on" },
     { town: "Fergus",       slug: "fergus-on" },
     { town: "Acton",        slug: "acton-on" },
+    { town: "Hamilton",     slug: "hamilton-on" },
   ];
 
   const results = [];
@@ -348,6 +351,7 @@ async function crawlZolo() {
     { town: "Milton",       slug: "milton-real-estate/rentals" },
     { town: "Halton Hills", slug: "halton-hills-real-estate/rentals" },
     { town: "Georgetown",   slug: "georgetown-real-estate/rentals" },
+    { town: "Hamilton",     slug: "hamilton-real-estate/rentals" },
   ];
 
   const results = [];
@@ -397,6 +401,7 @@ async function crawlKijiji() {
     { town: "Georgetown",   q: "georgetown" },
     { town: "Fergus",       q: "fergus" },
     { town: "Acton",        q: "acton" },
+    { town: "Hamilton",     q: "hamilton" },
   ];
 
   const results = [];
@@ -456,6 +461,7 @@ async function crawlRentCafe() {
     { town: "Oakville",     slug: "oakville" },
     { town: "Milton",       slug: "milton" },
     { town: "Halton Hills", slug: "halton-hills" },
+    { town: "Hamilton",     slug: "hamilton" },
   ];
 
   const results = [];
@@ -495,7 +501,7 @@ async function crawlRentCafe() {
 // Source 8: Viewit.ca — legacy SSR
 // ---------------------------------------------------------------------------
 async function crawlViewit() {
-  const cities = ["Burlington", "Oakville", "Milton"];
+  const cities = ["Burlington", "Oakville", "Milton", "Hamilton"];
 
   const results = [];
   await Promise.allSettled(cities.map(async (town) => {
@@ -534,7 +540,7 @@ async function crawlViewit() {
 // Source 9: RentBoard.ca — SSR
 // ---------------------------------------------------------------------------
 async function crawlRentBoard() {
-  const cities = ["Burlington", "Oakville", "Milton", "Georgetown"];
+  const cities = ["Burlington", "Oakville", "Milton", "Georgetown", "Hamilton"];
 
   const results = [];
   await Promise.allSettled(cities.map(async (town) => {
