@@ -81,8 +81,11 @@ function classifyShared(text) {
 function townMatches(value) {
   if (!value) return null;
   const v = String(value).toLowerCase();
+  // Word-boundary match to avoid "milton" matching inside "hamilton".
   for (const t of ALLOWED_TOWNS) {
-    if (v.includes(t.toLowerCase())) return t;
+    const tl = t.toLowerCase().replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+    const re = new RegExp(`\\b${tl}\\b`);
+    if (re.test(v)) return t;
   }
   return null;
 }
@@ -411,12 +414,18 @@ async function crawlKijiji() {
       const html = await fetchHTML(url);
       const $ = cheerio.load(html);
 
+      // Kijiji returns nationwide hits for keyword search — restrict to URL slugs
+      // that actually belong to Halton + Hamilton + Guelph (covers Fergus).
+      const allowedKijijiSlugs = [
+        "/oakville-halton-region/", "/hamilton/", "/guelph/",
+      ];
       const seenLinks = new Set();
       $('a[href*="/v-apartments-condos/"]').each((_, el) => {
         const $a = $(el);
         const link = $a.attr("href");
         if (!link || seenLinks.has(link)) return;
         seenLinks.add(link);
+        if (!allowedKijijiSlugs.some((s) => link.includes(s))) return;
 
         // Find the listing container (walk up to a reasonable card-like ancestor).
         const $container = $a.closest('section, article, li, div[class*="listing"], div[class*="item"], div[class*="card"]');
